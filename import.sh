@@ -13,9 +13,9 @@ set -e
 PKG=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 VERSION=$(cat "$PKG/VERSION")
 
-. "$PKG/tmputil.sh"
-. "$PKG/pathutil.sh"
-. "$PKG/logutil.sh"
+. "$PKG/util/tmputil.sh"
+. "$PKG/util/pathutil.sh"
+. "$PKG/util/logutil.sh"
 
 help() {
     cat <<EOF

@@ -11,7 +11,7 @@
 PKG=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 VERSION=$(cat "$PKG/VERSION")
 
-. "$PKG/pathutil.sh"
+. "$PKG/util/pathutil.sh"
 
 help() {
     cat <<EOF
