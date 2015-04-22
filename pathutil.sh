@@ -5,6 +5,7 @@
 # This is a library module and only contains function definitions. Source into 
 # main script(s) to make use of them.
 
+OUTERNET_CONTENT=${OUTERNET_CONTENT:-$(pwd)}
 
 # md5(s)
 #
@@ -63,3 +64,29 @@ joinseg() {
     pfx=$3
     echo -n "$1" | sed -r "s|^$pfx||" | sed -r "s|$d||g"
 }
+
+# pathcards(s, len)
+#
+# Given a string $s, contruct a path that converts missing segments into
+# wildcards. The $len argument defaults to 32 (length of MD5 hexdigest) and it
+# determines the number of widcards needed. String may be longer than $len, but 
+# that is not checked by this function.
+#
+# Example:
+#
+#     $ pathcards ffbb8cd28
+#     ffb/b8c/d28/*/*/*/*/*/*/*/*
+#
+pathcards() {
+    s=$1
+    len=${2:-32}
+    slen=${#s}
+    diff=$(expr $len - $slen)
+    if [ $diff > 0 ]
+    then
+        filler=$(printf 'X%.0s' $(seq 1 $diff))
+        s=${s}$filler
+    fi
+    echo -n $(splitseg "$s") | sed -r 's|X+|\*|g'
+}
+
