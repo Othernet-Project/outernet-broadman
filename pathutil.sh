@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
 # Tools for working with MD5-based paths
+#
+# Copyright 2015, Outernet Inc.
+# Some rights reserved.
+# 
+# This software is free software licensed under the terms of GPLv3. See COPYING
+# file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
+
 
 OUTERNET_CONTENT=${OUTERNET_CONTENT:-$(pwd)}
 PATH_WC="$OUTERNET_CONTENT/*/*/*/*/*/*/*/*/*/*/*"
