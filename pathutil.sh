@@ -6,6 +6,7 @@
 # main script(s) to make use of them.
 
 OUTERNET_CONTENT=${OUTERNET_CONTENT:-$(pwd)}
+PATH_WC="$OUTERNET_CONTENT/*/*/*/*/*/*/*/*/*/*/*"
 
 # md5(s)
 #
