@@ -14,7 +14,6 @@ PKG=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . "$PKG/logutil.sh"
 
 VERSION=$(cat "$PKG/VERSION")
-: ${OUTERNET_CONTENT:=$(pwd)}
 
 help() {
     cat <<EOF
