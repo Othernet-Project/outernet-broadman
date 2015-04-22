@@ -8,10 +8,10 @@
 # This software is free software licensed under the terms of GPLv3. See COPYING
 # file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
-PKG=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-VERSION=$(cat "$PKG/VERSION")
+SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+VERSION=$(cat "$SRC/VERSION")
 
-. "$PKG/util/pathutil.sh"
+. "$SRC/util/pathutil.sh"
 
 
 help() {
@@ -46,7 +46,7 @@ full_search() {
     keyword=$1
     key=$2
     # First perform a naive search to narrow down the search
-    naive_search "$keyword" | python "$PKG/matchjson.py" "$keyword" "$key"
+    naive_search "$keyword" | python "$SRC/matchjson.py" "$keyword" "$key"
 }
 
 keyword=$1

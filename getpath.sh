@@ -8,10 +8,10 @@
 # This software is free software licensed under the terms of GPLv3. See COPYING
 # file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
-PKG=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-VERSION=$(cat "$PKG/VERSION")
+SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+VERSION=$(cat "$SRC/VERSION")
 
-. "$PKG/util/pathutil.sh"
+. "$SRC/util/pathutil.sh"
 
 help() {
     cat <<EOF

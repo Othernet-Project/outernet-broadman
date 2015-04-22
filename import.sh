@@ -10,12 +10,12 @@
 
 set -e
 
-PKG=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-VERSION=$(cat "$PKG/VERSION")
+SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+VERSION=$(cat "$SRC/VERSION")
 
-. "$PKG/util/tmputil.sh"
-. "$PKG/util/pathutil.sh"
-. "$PKG/util/logutil.sh"
+. "$SRC/util/tmputil.sh"
+. "$SRC/util/pathutil.sh"
+. "$SRC/util/logutil.sh"
 
 help() {
     cat <<EOF
@@ -53,7 +53,6 @@ fi
 # Initialize new log file
 mklog import_log
 
-
 filename=$(basename "$zipfile")
 cid=${filename%%.*}  # content ID
 tmpdir=$(mktmpdir import)
@@ -65,6 +64,7 @@ then
     exit 1
 fi
 
+echo "Importing $zipfile"
 log Importing $zipfile
 
 echo -n "Extracting content..."
