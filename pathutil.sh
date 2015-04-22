@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 
 # Tools for working with MD5-based paths
-#
-# This is a library module and only contains function definitions. Source into 
-# main script(s) to make use of them.
 
 OUTERNET_CONTENT=${OUTERNET_CONTENT:-$(pwd)}
 PATH_WC="$OUTERNET_CONTENT/*/*/*/*/*/*/*/*/*/*/*"
