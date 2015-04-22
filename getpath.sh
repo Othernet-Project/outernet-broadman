@@ -3,10 +3,9 @@
 # Find content paths
 
 PKG=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+VERSION=$(cat "$PKG/VERSION")
 
 . "$PKG/pathutil.sh"
-
-VERSION=$(cat "$PKG/VERSION")
 
 help() {
     cat <<EOF
