@@ -52,11 +52,12 @@ splitseg() {
     echo -n "$s" | sed -r "s|(.{3})|\1$delim|g"
 }
 
-# joinseg(s, d, pfx)
-# ==================
+# joinseg(s, d, pfx, sfx)
+# =======================
 #
 # Given a string $s with segments delimited by $d, and a prefix $pfx, returns 
-# the string without the prefix and the delimiters.
+# the string without the prefix and the delimiters. Optional suffix $sfx can be 
+# used to strip any trailing characters.
 # 
 # For example:
 #
@@ -70,7 +71,8 @@ joinseg() {
     s=$1
     d=${2:-/}
     pfx=$3
-    echo -n "$1" | sed -r "s|^$pfx||" | sed -r "s|$d||g"
+    sfx=$4
+    echo -n "${s%$sfx}" | sed -r "s|^$pfx||" | sed -r "s|$d||g"
 }
 
 # pathcards(s, len)
