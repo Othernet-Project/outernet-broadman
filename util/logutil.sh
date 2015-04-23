@@ -7,6 +7,7 @@
 # 
 # This software is free software licensed under the terms of GPLv3. See COPYING
 # file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
+#
 
 SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
@@ -15,6 +16,7 @@ SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 LOGFILE=$SYSTEMP/log_$(date +%Y%m%d%H%M%S).log
 
 # mklog(pfx)
+# ==========
 #
 # Create a log file with prefix $pfx in the system temporary directory. Default 
 # prefix is 'log'. Filenames always contain the timestamp in '%Y%m%d%H%M%S' 
@@ -27,6 +29,7 @@ mklog() {
 }
 
 # log(msg)
+# ========
 #
 # Log a message to the logfile
 #
@@ -37,6 +40,7 @@ log() {
 
 
 # plog()
+# ======
 #
 # Rread from pipe and log
 #
@@ -46,5 +50,3 @@ plog() {
         log $msg
     done
 }
-
-

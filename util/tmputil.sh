@@ -7,10 +7,12 @@
 # 
 # This software is free software licensed under the terms of GPLv3. See COPYING
 # file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
+# 
 
 SYSTEMP=${TMPDIR:-/tmp}
 
 # mktmpdir(pfx)
+# =============
 #
 # Creates a temporary directory and echos the path. The temporary diretory is 
 # created under the system temporary directory. The directory name is based on 

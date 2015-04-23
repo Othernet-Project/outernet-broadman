@@ -7,12 +7,13 @@
 # 
 # This software is free software licensed under the terms of GPLv3. See COPYING
 # file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
-
+#
 
 OUTERNET_CONTENT=${OUTERNET_CONTENT:-$(pwd)}
 PATH_WC="$OUTERNET_CONTENT/*/*/*/*/*/*/*/*/*/*/*"
 
 # md5(s)
+# ======
 #
 # Convert string $s to MD5 hexdigest.
 #
@@ -27,6 +28,7 @@ md5() {
 }
 
 # splitseg(s, d)
+# ==============
 #
 # Splits string $s into segments of 3 digits + remainder and concatenates them 
 # using delimiter $d.
@@ -51,6 +53,7 @@ splitseg() {
 }
 
 # joinseg(s, d, pfx)
+# ==================
 #
 # Given a string $s with segments delimited by $d, and a prefix $pfx, returns 
 # the string without the prefix and the delimiters.
@@ -71,6 +74,7 @@ joinseg() {
 }
 
 # pathcards(s, len)
+# =================
 #
 # Given a string $s, contruct a path that converts missing segments into
 # wildcards. The $len argument defaults to 32 (length of MD5 hexdigest) and it
@@ -96,6 +100,7 @@ pathcards() {
 }
 
 # findpath(cid)
+# =============
 #
 # Get paths matching partial ID $cid
 #
@@ -105,6 +110,7 @@ findpath() {
 }
 
 # fullcid(path)
+# =============
 #
 # Get full content ID from given path
 #
@@ -114,6 +120,7 @@ fullcid() {
 }
 
 # contentpath(cid)
+# ================
 #
 # Get full path for content with specified ID
 #
@@ -123,6 +130,7 @@ contentpath() {
 }
 
 # broadcastpath(cid)
+# ==================
 #
 # Get path to broadcast file for given content ID
 #
@@ -132,6 +140,7 @@ broadcastpath() {
 }
 
 # infopath(cid)
+# =============
 #
 # Get path to metadta file for given content ID
 #
