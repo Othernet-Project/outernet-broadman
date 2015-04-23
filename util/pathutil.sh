@@ -75,6 +75,20 @@ joinseg() {
     echo -n "${s%$sfx}" | sed -r "s|^$pfx||" | sed -r "s|$d||g"
 }
 
+# pjoinseg(d, pfx, sfx)
+# 
+# Pipable version of joinseg()
+#
+pjoinseg() {
+    d=${1:-/}
+    pfx=$2
+    sfx=$3
+    while read s
+    do
+        echo $(joinseg "$s" "$d" "$pfx" "$sfx")
+    done
+}
+
 # pathcards(s, len)
 # =================
 #
