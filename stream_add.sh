@@ -25,6 +25,7 @@ Mark content with given ID for broadcast in specified stream
 
 Usage:
     $SCRIPTNAME ID STREAM
+    ID | $SCRIPTNAME STREAM
 
 Parameters:
     ID          full or partial content ID
@@ -32,38 +33,61 @@ Parameters:
 EOF
 }
 
-cid=$1
-label=$2
+sadd() {
+    cid=$1
+    label=$2
 
-if [ -z "$cid" ] || [ -z "$label" ]
-then
-    help
-    exit 1
-fi
-
-if [ -z "$(getstream "$label" || true)" ]
-then
-    echo "${label}: no such stream"
-    exit 1
-fi
-
-cpath=$(findpath "$cid")
-cid=$(fullcid $cpath)
-bfile=$(broadcastpath "$cid")
-
-if [ ! -e "$cpath" ]
-then
-    echo "${cpath}: no such directory"
-    exit 1
-fi
-
-if [ -e "$bfile" ]
-then
-    grep "^$label" "$bfile" > /dev/null 2>&1
-    if [ $? -ne 1 ]
+    if [ -z "$(getstream "$label" || true)" ]
     then
-        echo "$cid: already marked for broadcast on $label"
+        echo "${label}: no such stream"
+        exit 1
     fi
-fi
 
-echo "$label" >> "$bfile"
+    cpath=$(findpath "$cid")
+    cid=$(fullcid $cpath)
+    bfile=$(broadcastpath "$cid")
+
+    if [ ! -e "$cpath" ]
+    then
+        echo "${cpath}: no such directory"
+        exit 1
+    fi
+
+    if [ -e "$bfile" ]
+    then
+        grep "^$label" "$bfile" > /dev/null 2>&1
+        if [ $? -ne 1 ]
+        then
+            echo "$cid: already marked for broadcast on $label"
+        fi
+    fi
+
+    echo "$label" >> "$bfile"
+}
+
+if [ -t 0 ]
+then
+    cid=$1
+    label=$2
+
+    if [ -z "$cid" ] || [ -z "$label" ]
+    then
+        help
+        exit 1
+    fi
+
+    sadd "$cid" "$laebel"
+else
+    label=$1
+
+    if [ -z "$label" ]
+    then
+        help
+        exit 1
+    fi
+
+    while read cid
+    do
+        sadd "$cid" "$label"
+    done
+fi
