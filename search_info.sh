@@ -47,7 +47,7 @@ full_search() {
     keyword=$1
     key=$2
     # First perform a naive search to narrow down the search
-    naive_search "$keyword" | python "$SRC/matchjson.py" "$keyword" "$key"
+    naive_search "$keyword" | python "$SRC/filterjson.py" "$keyword" "$key"
 }
 
 keyword=$1
