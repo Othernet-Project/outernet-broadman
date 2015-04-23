@@ -107,9 +107,10 @@ if __name__ == '__main__':
         description='Match within JSON key values')
     parser.add_argument('keyword', metavar='KEYWORD', help='search keyword')
     parser.add_argument('key', metavar='KEY', help='key within the JSON data')
-    parser.add_argument('path', metavar='PATH', help='JSON file (dfaults to '
-                        'info.json in current directory, ignored when used in '
-                        'a pipe)', default='./info.json', nargs='?')
+    parser.add_argument('path', metavar='PATH', help='JSON file or content '
+                        'directory (dfaults to info.json in current '
+                        'directory, ignored when used in a pipe)',
+                        default='./info.json', nargs='?')
 
     # Match type
     parser.add_argument('-x', action='store_true',
@@ -129,17 +130,20 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
 
-    if os.isatty(0):
-        path = args.path.strip()
+    def domatch(path):
+        path = path.strip()
         kw = prep_kw(args.keyword, args.t)
-        if match(path, args.key, kw, args.x, args.i, args.gt, args.lt):
+        if not os.path.basename(path) == 'info.json':
+            infopath = os.path.join(path, 'info.json')
+        else:
+            infopath = path
+        if match(infopath, args.key, kw, args.x, args.i, args.gt, args.lt):
             print(path)
+
+    if os.isatty(0):
+        domatch(args.path)
     else:
         path = sys.stdin.readline()
         while path:
-            path = path.strip()
-            kw = prep_kw(args.keyword, args.t)
-            if match(path, args.key, kw, args.x, args.i, args.gt,
-                     args.lt):
-                print(path)
+            domatch(path)
             path = sys.stdin.readline()
