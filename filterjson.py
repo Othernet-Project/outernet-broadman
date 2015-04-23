@@ -88,7 +88,6 @@ def match(path, key, keyword, xmatch=False, icase=True, gt=False, lt=False):
         val = parse_ts(val.rstrip(' UTC'))
 
     if xmatch or keyword in [True, False]:
-        print('xmatching')
         return keyword == val
 
     if gt:
@@ -131,15 +130,16 @@ if __name__ == '__main__':
     args = parser.parse_args(sys.argv[1:])
 
     if os.isatty(0):
-        path = args.path
+        path = args.path.strip()
         kw = prep_kw(args.keyword, args.t)
-        if match(path.strip(), args.key, kw, args.x, args.i, args.gt, args.lt):
+        if match(path, args.key, kw, args.x, args.i, args.gt, args.lt):
             print(path)
     else:
         path = sys.stdin.readline()
         while path:
+            path = path.strip()
             kw = prep_kw(args.keyword, args.t)
-            if match(path.strip(), args.key, kw, args.x, args.i, args.gt,
+            if match(path, args.key, kw, args.x, args.i, args.gt,
                      args.lt):
                 print(path)
             path = sys.stdin.readline()
