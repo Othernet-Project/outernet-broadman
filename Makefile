@@ -20,5 +20,9 @@ docs/util/%.txt : util/%.sh
 docs/ docs/util/: 
 	mkdir -p $@
 
+%.sh:
+	cat templates/script.sh.txt > $@
+	chmod +x $@
+
 clean :
 	rm -rf docs
