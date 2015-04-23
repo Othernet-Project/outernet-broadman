@@ -21,16 +21,31 @@ $SCRIPTNAME v$VERSION
 
 Usage:
     $SCRIPTNAME ARG
+    ARG | $SCRIPTNAME
 
 Parameter:
     ARG         some argument
 EOF
 }
 
-arg=$1
+main() {
+    arg=$1
+}
 
-if [ -z "$arg" ]
+if [ -t 0 ]
 then
-    help
-    exit 1
+    arg=$1
+
+    if [ -z "$arg" ]
+    then
+        help
+        exit 1
+    fi
+
+    main "$arg"
+else
+    while read arg
+    do
+        main "$arg"
+    done
 fi
