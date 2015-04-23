@@ -8,6 +8,8 @@
 # This software is free software licensed under the terms of GPLv3. See COPYING
 # file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
+set -e
+
 SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 SCRIPTNAME=$(basename ${BASH_SOURCE[0]})
 VERSION=$(cat "$SRC/VERSION")
@@ -39,6 +41,12 @@ then
     exit 1
 fi
 
+if [ -z "$(getstream "$label" || true)" ]
+then
+    echo "${label}: no such stream"
+    exit 1
+fi
+
 cpath=$(findpath "$cid")
 cid=$(fullcid $cpath)
 bfile=$(broadcastpath "$cid")
@@ -47,12 +55,6 @@ if [ ! -e "$cpath" ]
 then
     echo "${cpath}: no such directory"
     exit 1
-fi
-
-getstream "$label" > /dev/null 2>&1
-if [ $? -ne 0 ]
-then
-    echo "${label}: no such stream"
 fi
 
 if [ -e "$bfile" ]
