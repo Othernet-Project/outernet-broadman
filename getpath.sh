@@ -22,6 +22,7 @@ Find any paths matching content ID or ID fragment
 
 Usage: 
     $SCRIPTNAME ID
+    ID | $SCRIPTNAME
 
 Parameters:
     ID      full or partial content ID
