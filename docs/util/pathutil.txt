@@ -1,0 +1,89 @@
+Tools for working with MD5-based paths
+
+Copyright 2015, Outernet Inc.
+Some rights reserved.
+
+This software is free software licensed under the terms of GPLv3. See COPYING
+file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
+
+md5(s)
+======
+
+Convert string $s to MD5 hexdigest.
+
+For example:
+
+    $ md5 foo
+    acbd18db4cc2f85cedef654fccc4a4d8
+
+splitseg(s, d)
+==============
+
+Splits string $s into segments of 3 digits + remainder and concatenates them 
+using delimiter $d.
+
+Default delimiter is '/'.
+
+For example:
+
+   $ splitseg 123456789
+   123/456/789
+
+   $ splitseg 1234567890
+   123/456/789/0
+
+   $ splitseg 1234567890 '#'
+   123#456#789#0
+
+joinseg(s, d, pfx)
+==================
+
+Given a string $s with segments delimited by $d, and a prefix $pfx, returns 
+the string without the prefix and the delimiters.
+
+For example:
+
+   $ joinseg /foo/123/456/789/0 /
+   foo1234567890
+
+   $ joinseg /foo/123/456/789/0 / /foo
+   1234567890
+
+pathcards(s, len)
+=================
+
+Given a string $s, contruct a path that converts missing segments into
+wildcards. The $len argument defaults to 32 (length of MD5 hexdigest) and it
+determines the number of widcards needed. String may be longer than $len, but 
+that is not checked by this function.
+
+Example:
+
+    $ pathcards ffbb8cd28
+    ffb/b8c/d28/*/*/*/*/*/*/*/*
+
+findpath(cid)
+=============
+
+Get paths matching partial ID $cid
+
+fullcid(path)
+=============
+
+Get full content ID from given path
+
+contentpath(cid)
+================
+
+Get full path for content with specified ID
+
+broadcastpath(cid)
+==================
+
+Get path to broadcast file for given content ID
+
+infopath(cid)
+=============
+
+Get path to metadta file for given content ID
+

@@ -1,0 +1,10 @@
+stream_add.sh v0.1
+
+Mark content with given ID for broadcast in specified stream
+
+Usage:
+    stream_add.sh ID STREAM
+
+Parameters:
+    ID          full or partial content ID
+    STREAM      stream label

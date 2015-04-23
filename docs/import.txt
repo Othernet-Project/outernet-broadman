@@ -1,0 +1,9 @@
+import.sh v0.1
+
+Imports a legacy zipball into content repository
+
+Usage: 
+    import.sh PATH
+
+Parameters:
+    PATH    path to legacy zipball

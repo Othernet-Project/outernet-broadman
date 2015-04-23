@@ -1,0 +1,9 @@
+getpath.sh v0.1
+
+Find any paths matching content ID or ID fragment
+
+Usage: 
+    getpath.sh ID
+
+Parameters:
+    ID      full or partial content ID
