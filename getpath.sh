@@ -25,7 +25,7 @@ Usage:
     ID | $SCRIPTNAME
 
 Parameters:
-    ID      full or partial content ID
+    ID      full or partial content ID (use 'all' for all content)
 EOF
 }
 
@@ -39,7 +39,12 @@ then
         exit 0
     fi
 
-    findpath "$cid"
+    if [ "$cid" == "all" ]
+    then
+        findpath X
+    else
+        findpath "$cid"
+    fi
 else
     while read cid
     do
