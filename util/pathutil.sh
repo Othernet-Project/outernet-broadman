@@ -122,7 +122,7 @@ pathcards() {
 #
 findpath() {
     cid=$1
-    find $(pathcards "$cid") -maxdepth 0
+    find "$OUTERNET_CONTENT/"$(pathcards "$cid") -maxdepth 0
 }
 
 # fullcid(path)
