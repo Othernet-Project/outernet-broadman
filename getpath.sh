@@ -28,12 +28,20 @@ Parameters:
 EOF
 }
 
-cid=$1
-
-if [ -z "$cid" ]
+if [ -t 0 ]
 then
-    help
-    exit 0
-fi
+    cid=$1
 
-findpath $cid
+    if [ -z "$cid" ]
+    then
+        help
+        exit 0
+    fi
+
+    findpath "$cid"
+else
+    while read cid
+    do
+        findpath "$cid"
+    done
+fi
