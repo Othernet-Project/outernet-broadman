@@ -95,3 +95,47 @@ pathcards() {
     echo -n $(splitseg "$s") | sed -r 's|X+|\*|g'
 }
 
+# findpath(cid)
+#
+# Get paths matching partial ID $cid
+#
+findpath() {
+    cid=$1
+    find $(pathcards "$cid") -maxdepth 0
+}
+
+# fullcid(path)
+#
+# Get full content ID from given path
+#
+fullcid() {
+    path=$1
+    echo $(joinseg "$path" / $OUTERNET_CONTENT)
+}
+
+# contentpath(cid)
+#
+# Get full path for content with specified ID
+#
+contentpath() {
+    cid=$1
+    echo "$OUTERNET_CONTENT/$(splitseg "$cid")"
+}
+
+# broadcastpath(cid)
+#
+# Get path to broadcast file for given content ID
+#
+broadcastpath() {
+    cid=$1
+    echo "$(contentpath "$cid")/.broadcast"
+}
+
+# infopath(cid)
+#
+# Get path to metadta file for given content ID
+#
+infopath() {
+    cid=$1
+    echo "$(contentpath "$cid")/info.json"
+}
