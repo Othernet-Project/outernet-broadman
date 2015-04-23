@@ -9,15 +9,16 @@ docs : $(docs)
 	
 utildocs : $(utildocs)
 
+docdirs: docs/ docs/util/
+
 docs/%.txt : %.sh 
 	$(bash) $< > $@ || true
 
 docs/util/%.txt : util/%.sh
 	cat $< | grep '^#' | grep -v '#!' | sed -r 's/^# ?//' > $@
 
-docdirs: 
-	mkdir -p $(docdir)
-	mkdir -p $(docdir)/util
+docs/ docs/util/: 
+	mkdir -p $@
 
 clean :
 	rm -rf docs
