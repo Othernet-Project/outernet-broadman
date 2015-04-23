@@ -11,6 +11,7 @@
 set -e
 
 SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+SCRIPTNAME=$(basename ${BASH_SOURCE[0]})
 VERSION=$(cat "$SRC/VERSION")
 
 . "$SRC/util/tmputil.sh"
@@ -19,12 +20,12 @@ VERSION=$(cat "$SRC/VERSION")
 
 help() {
     cat <<EOF
-import.sh v$VERSION
+$SCRIPTNAME v$VERSION
 
 Imports a legacy zipball into content repository
 
 Usage: 
-    import.sh PATH
+    $SCRIPTNAME PATH
 
 Parameters:
     PATH    path to legacy zipball

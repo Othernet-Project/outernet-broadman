@@ -9,18 +9,19 @@
 # file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
 SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+SCRIPTNAME=$(basename ${BASH_SOURCE[0]})
 VERSION=$(cat "$SRC/VERSION")
 
 . "$SRC/util/pathutil.sh"
 
 help() {
     cat <<EOF
-getpath.sh v$VERSION
+$SCRIPTNAME v$VERSION
 
 Find any paths matching content ID or ID fragment
 
 Usage: 
-    getpath.sh ID
+    $SCRIPTNAME ID
 
 Parameters:
     ID      full or partial content ID
@@ -35,4 +36,4 @@ then
     exit 0
 fi
 
-find $(pathcards $cid) -maxdepth 0
+findpath $cid

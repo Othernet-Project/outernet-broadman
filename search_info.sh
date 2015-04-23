@@ -9,6 +9,7 @@
 # file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
 SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+SCRIPTNAME=$(basename ${BASH_SOURCE[0]})
 VERSION=$(cat "$SRC/VERSION")
 
 . "$SRC/util/pathutil.sh"
@@ -16,12 +17,12 @@ VERSION=$(cat "$SRC/VERSION")
 
 help() {
     cat <<EOF
-search_info.sh v$VERSION
+$SCRIPTNAME v$VERSION
 
 Obtain hashes of conent whose metadata match lookup criteria
 
 Uage:
-    search_info.sh KEYWORD
+    $SCRIPTNAME KEYWORD
 
 Parameters:
     KEYWORD     search keyword
