@@ -14,7 +14,6 @@ SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 STREAMDEF=$OUTERNET_CONTENT/.streamdef
 
-
 # getstream(label)
 # ================
 #
@@ -22,7 +21,7 @@ STREAMDEF=$OUTERNET_CONTENT/.streamdef
 #
 getstream() {
     label=$1
-    grep "^$label "  "$STREAMDEF"
+    grep "^$label " "$STREAMDEF"
 }
 
 # getlabels()
