@@ -75,10 +75,22 @@ echo done
 echo -n "Creating new directory structure..."
 mkdir -p "$newpath" 2>&1 | plog || fail
 echo done
+
 echo -n "Copying files..."
 cp -rv "$tmpdir/$cid"/* "$newpath" 2>&1 | plog || fail
 echo done
+
+echo -n "Reformatting JSON metadata..."
+"$SRC/reformatjson.py" "$newpath" 2>&1 | plog || fail
+echo done
+
+echo -n "Adding blank stream assignment and sign-off files..."
+echo '' > "$newpath/.broadcast"
+echo '' > "$newpath/.signoffs"
+echo done
+
 echo -n "Removing temporary directory..."
 rm -rf "$tmpdir" 2>&1 | plog || fail
 echo done
+
 echo "Log file is available at $LOGFILE"
