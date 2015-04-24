@@ -36,6 +36,7 @@ def parse_date(s):
     except ValueError:
         vfail(s, 'not a valid date')
 
+
 def parse_ts(s):
     try:
         return datetime.strptime(s, TSFMT)
