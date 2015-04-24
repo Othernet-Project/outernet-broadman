@@ -9,9 +9,9 @@
 # file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 #
 
-SRC=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+LOGUTIL_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-. "$SRC/tmputil.sh"
+. "$LOGUTIL_DIR/tmputil.sh"
 
 LOGFILE=$SYSTEMP/log_$(date +%Y%m%d%H%M%S).log
 
