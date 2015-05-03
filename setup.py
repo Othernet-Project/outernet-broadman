@@ -57,6 +57,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
+            'getpath = broadman.getpath:main',
+            'filter = broadman.filterjson:main',
         ],
     },
     classifiers=[
