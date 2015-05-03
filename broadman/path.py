@@ -102,6 +102,9 @@ def pathrx(cid, l=SEGLEN):
     # Convert head to segments
     segs = [segrx(s, l) for s in splitseg(head, l)]
     nsegs = len(segs)
+    if not nsegs:
+        segs.append(segrx('', l))
+        nsegs = 1
     fullseg_missing = totsegs - nsegs
     # Construct the regex
     rx = os.sep.join(segs)

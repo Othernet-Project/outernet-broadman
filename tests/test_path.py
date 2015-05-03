@@ -189,3 +189,11 @@ def test_pathrx_full_id(x, mock_os):
     l, rx = x
     cid = 'accbcb49659267846e5590b4694ee769'
     assert mod.pathrx(cid, l) == rx
+
+
+def test_pathrx_empty_path(mock_os):
+    """
+    Given no content ID, when pathrx() is called, then it returns a pattern
+    that would match any and all content directories.
+    """
+    assert mod.pathrx('') == '[0-9a-f]{3}(?:/[0-9a-f]{3}){9}/[0-9a-f]{2}'
