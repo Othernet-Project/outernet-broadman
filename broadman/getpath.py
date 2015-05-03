@@ -21,7 +21,10 @@ CHUNK = 1000  # process no more than this many paths at once
 
 
 def convert(*cids):
-    cidsrx = '|'.join(path.pathrx(cid) for cid in cids)
+    if not cids:
+        cidsrx = path.pathrx('')
+    else:
+        cidsrx = '|'.join(path.pathrx(cid) for cid in cids)
     fullrx = re.compile('^{}{}(?:{})$'.format(path.POOLDIR, os.sep, cidsrx))
     matcher = lambda p: fullrx.match(p)
     for p in path.fnwalk(path.POOLDIR, matcher, shallow=True):
@@ -40,9 +43,6 @@ def main():
     args = parser.parse_args()
 
     if os.isatty(0):
-        if not args.cids:
-            parser.print_help()
-            sys.exit(0)
         convert(*args.cids)
     else:
         cids = []
