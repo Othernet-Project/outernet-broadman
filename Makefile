@@ -3,7 +3,7 @@ docs = $(patsubst %.sh,$(docdir)/%.txt,$(wildcard *.sh))
 utildocs = $(patsubst %.sh,$(docdir)/%.txt,$(wildcard util/*.sh))
 bash = /bin/bash
 
-all : docdirs docs utildocs
+.PHONY: docdirs docs utildocs
 
 docs : $(docs) 
 	
