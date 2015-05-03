@@ -3,13 +3,13 @@ docs = $(patsubst %.sh,$(docdir)/%.txt,$(wildcard *.sh))
 utildocs = $(patsubst %.sh,$(docdir)/%.txt,$(wildcard util/*.sh))
 bash = /bin/bash
 
-.PHONY: docdirs docs utildocs
+.PHONY : docdirs docs utildocs
 
 docs : $(docs) 
 	
 utildocs : $(utildocs)
 
-docdirs: docs/ docs/util/
+docdirs : docs/ docs/util/
 
 docs/%.txt : %.sh 
 	$(bash) $< > $@ || true
@@ -17,10 +17,10 @@ docs/%.txt : %.sh
 docs/util/%.txt : util/%.sh
 	cat $< | grep '^#' | grep -v '#!' | sed -r 's/^# ?//' > $@
 
-docs/ docs/util/: 
+docs/ docs/util/ : 
 	mkdir -p $@
 
-%.sh:
+%.sh :
 	cat templates/script.sh.txt > $@
 	chmod +x $@
 
