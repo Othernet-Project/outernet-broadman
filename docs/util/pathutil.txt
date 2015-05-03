@@ -35,11 +35,12 @@ For example:
    $ splitseg 1234567890 '#'
    123#456#789#0
 
-joinseg(s, d, pfx)
-==================
+joinseg(s, d, pfx, sfx)
+=======================
 
 Given a string $s with segments delimited by $d, and a prefix $pfx, returns 
-the string without the prefix and the delimiters.
+the string without the prefix and the delimiters. Optional suffix $sfx can be 
+used to strip any trailing characters.
 
 For example:
 
@@ -48,6 +49,10 @@ For example:
 
    $ joinseg /foo/123/456/789/0 / /foo
    1234567890
+
+pjoinseg(d, pfx, sfx)
+
+Pipable version of joinseg()
 
 pathcards(s, len)
 =================

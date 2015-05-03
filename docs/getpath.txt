@@ -4,6 +4,7 @@ Find any paths matching content ID or ID fragment
 
 Usage: 
     getpath.sh ID
+    ID | getpath.sh
 
 Parameters:
-    ID      full or partial content ID
+    ID      full or partial content ID (use 'all' for all content)

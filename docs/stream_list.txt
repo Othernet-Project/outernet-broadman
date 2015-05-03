@@ -1,0 +1,7 @@
+stream_list.sh v0.1
+
+Usage:
+    stream_list.sh LABEL
+
+Parameter:
+    LABEL       stream label

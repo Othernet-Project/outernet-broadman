@@ -1,0 +1,8 @@
+getcid.sh v0.1
+
+Usage:
+    getcid.sh PATH
+    PATH | getcid.sh
+
+Parameter:
+    PATH        path of the content directory

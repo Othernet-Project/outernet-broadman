@@ -4,6 +4,7 @@ Mark content with given ID for broadcast in specified stream
 
 Usage:
     stream_add.sh ID STREAM
+    ID | stream_add.sh STREAM
 
 Parameters:
     ID          full or partial content ID
