@@ -14,6 +14,7 @@ from __future__ import print_function
 
 import re
 import os
+import sys
 from . import path
 
 CHUNK = 1000  # process no more than this many paths at once
@@ -24,7 +25,7 @@ def convert(*cids):
     fullrx = re.compile('^{}{}(?:{})$'.format(path.POOLDIR, os.sep, cidsrx))
     matcher = lambda p: fullrx.match(p)
     for p in path.fnwalk(path.POOLDIR, matcher, shallow=True):
-        print(os.path.abspath(p))
+        print(os.path.abspath(p), file=sys.stdout)
 
 
 def main():
