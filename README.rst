@@ -14,7 +14,11 @@ The following command line tools are required:
 - zipinfo
 - md5sum
 
-Python should also be installed.
+Python shouldalso be installed.
+
+The following Python dependencies are also required:
+
+- outernet-metadata
 
 Naming conventions
 ==================
