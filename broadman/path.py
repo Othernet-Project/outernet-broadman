@@ -13,7 +13,7 @@ from __future__ import division
 import os
 
 # Definitive rule for where to get the content pool directory
-POOLDIR = os.environ.get('OUTERNET_CONTENT', '.')
+POOLDIR = os.environ.get('OUTERNET_CONTENT', '.').rstrip(os.sep)
 
 # Default content ID length
 CIDLEN = 32
