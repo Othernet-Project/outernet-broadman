@@ -123,7 +123,7 @@ class Progress:
 
     def __init__(self, printer, end='DONE', abrt='FAIL', prog='.'):
         """
-        The ``Print`` method to be used is specified using the ``printer``
+        The ``Console`` method to be used is specified using the ``printer``
         argument.
 
         ``end`` argument specified the progress end banner. It defaults to
@@ -185,7 +185,7 @@ class Progress:
         self.printer(s, end='')
 
 
-class Print:
+class Console:
     """
     Wrapper around print with helper methods that cover typical ``print()``
     usage in console programs.
@@ -219,12 +219,12 @@ class Print:
         print(*args, **kwargs)
 
     def pstd(self, *args, **kwargs):
-        """ Print to STDOUT """
+        """ Console to STDOUT """
         kwargs.setdefault('file', self.out)
         self.print(*args, **kwargs)
 
     def perr(self, *args, **kwargs):
-        """ Print to STERR """
+        """ Console to STERR """
         kwargs.setdefault('file', self.err)
         self.print(*args, **kwargs)
 
@@ -233,7 +233,7 @@ class Print:
         self.print('{}: {}'.format(val, msg), *args, **kwargs)
 
     def pverb(self, *args, **kwargs):
-        """ Print verbose message to STDOUT """
+        """ Console verbose message to STDOUT """
         if not self.verbose:
             return
         self.pstd(*args, **kwargs)
@@ -288,7 +288,7 @@ class Print:
         indicators. To start the progress, pass ``msg`` argument as a start
         message. For example::
 
-            printer = Print(verbose=True)
+            printer = Console(verbose=True)
             with printer.progress('Checking files') as progress:
                 # Do some checks
                 if errors:

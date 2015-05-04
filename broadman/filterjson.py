@@ -19,7 +19,7 @@ from . import jsonf
 from . import data
 from . import conz
 
-pr = conz.Print()
+pr = conz.Console()
 
 
 def load_file(path):

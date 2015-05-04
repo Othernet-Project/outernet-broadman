@@ -28,7 +28,7 @@ from . import zips
 
 EDITOR = os.environ.get('EDITOR', 'vi')
 
-pr = conz.Print()
+pr = conz.Console()
 
 
 def edit(p):
