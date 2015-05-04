@@ -118,6 +118,7 @@ def set_vals(p, data):
     meta = jsonf.load(p)
     if 'images' in data and data['images'] < 0:
         data['images'] = count_imgs(p)
+        assert data['images'] >= 0, 'Expected positive image count'
     meta.update(data)
     jsonf.save(p, meta)
 
