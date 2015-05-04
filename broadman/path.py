@@ -12,7 +12,6 @@ from __future__ import division
 
 import re
 import os
-import itertools
 
 # Definitive rule for where to get the content pool directory
 POOLDIR = os.environ.get('OUTERNET_CONTENT', '.').rstrip(os.sep)
