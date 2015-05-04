@@ -16,7 +16,7 @@ import os
 from . import path
 from . import conz
 
-pr = conz.Console()
+cn = conz.Console()
 
 CHUNK = 1000  # process no more than this many paths at once
 
@@ -29,7 +29,7 @@ def convert(*cids):
     fullrx = re.compile('^{}{}(?:{})$'.format(path.POOLDIR, os.sep, cidsrx))
     matcher = lambda p: fullrx.match(p)
     for p in path.fnwalk(path.POOLDIR, matcher, shallow=True):
-        pr.pstd(os.path.abspath(p))
+        cn.pstd(os.path.abspath(p))
 
 
 def main():
@@ -45,5 +45,5 @@ def main():
     if os.isatty(0):
         convert(*args.cids)
     else:
-        for cids in pr.readpipe(CHUNK):
+        for cids in cn.readpipe(CHUNK):
             convert(*cids)
