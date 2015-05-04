@@ -13,10 +13,11 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 import os
 
 from outernet_metadata import validate
-from validators import make_chain, nonempty
+from validators import make_chain
 
 from . import conz
 from . import data
+from . import path
 from . import jsonf
 
 cn = conz.Console()
@@ -38,6 +39,12 @@ METAKEYS = {
     'is_sponsored': 'b',
     'keep_formatting': 'b'
 }
+
+IMGEXT = ['.jpg', '.jpeg', '.png', '.gif', '.svg']
+
+
+def isimg(p):
+    return os.path.splitext(p)[1].lower() in IMGEXT
 
 
 def clean(key, val):
@@ -85,6 +92,8 @@ def check_args(data):
         try:
             check(k, v)
         except ValueError as err:
+            if k == 'images':
+                continue
             errors[k] = err.args[0]
     if errors:
         for k, v in errors.items():
@@ -93,10 +102,18 @@ def check_args(data):
     return data
 
 
+def count_imgs(p):
+    if p.endswith('info.json'):
+        p = os.path.dirname(p)
+    return path.countwalk(p, isimg)
+
+
 def set_vals(p, data):
     if not p.endswith('info.json'):
         p = os.path.join(p, 'info.json')
     meta = jsonf.load(p)
+    if 'images' in data and data['images'] < 0:
+        data['images'] = count_imgs(p)
     meta.update(data)
     jsonf.save(p, meta)
 
