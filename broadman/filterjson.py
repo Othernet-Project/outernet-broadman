@@ -11,7 +11,6 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
 import os
-import sys
 
 from . import jsonf
 from . import data
@@ -69,16 +68,15 @@ def main():
                         'YYYY-MM-DD format, t for timestamp in YYYY-MM-DD '
                         'HH:MM:SS format, n for numeric, b for boolean)',
                         metavar='TYPE', default=None)
-    args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args()
 
-    if sys.stdin.isatty():
-        for path in args.paths:
-            domatch(path, args)
+    if cn.interm:
+        src = args.paths
     else:
-        path = sys.stdin.readline()
-        while path:
-            domatch(path, args)
-            path = sys.stdin.readline()
+        src = cn.readpipe()
+
+    for p in src:
+        domatch(p, args)
 
 
 if __name__ == '__main__':
