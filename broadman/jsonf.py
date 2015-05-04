@@ -14,9 +14,9 @@ import json
 
 
 try:
-    FILE_ERRORS = (OSError, FileNotFoundError)
+    FILE_ERRORS = (IOError, OSError, FileNotFoundError)
 except NameError:
-    FILE_ERRORS = (OSError)
+    FILE_ERRORS = (IOError, OSError)
 
 
 class LoadError(Exception):
