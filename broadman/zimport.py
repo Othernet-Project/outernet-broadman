@@ -42,6 +42,11 @@ def update_metadata(p):
     # Update the metadta with defaults
     data.update(values.DEFAULTS)
     data.update({'broadcast': '$BROADCAST'})
+    # Check for keys that are not in the specs
+    dkeys = list(data.keys())
+    for k in dkeys:
+        if k not in values.REQUIRED and k not in values.OPTIONAL:
+            del data[k]
     jsonf.save(p, data)
 
 
