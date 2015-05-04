@@ -197,3 +197,42 @@ def test_pathrx_empty_path(mock_os):
     that would match any and all content directories.
     """
     assert mod.pathrx('') == '[0-9a-f]{3}(?:/[0-9a-f]{3}){9}/[0-9a-f]{2}'
+
+
+@pytest.mark.parametrize('x', [
+    (5, 'accbc/b4965/92678/46e55/90b46/94ee7/69'),
+    (4, 'accb/cb49/6592/6784/6e55/90b4/694e/e769'),
+    (3, 'acc/bcb/496/592/678/46e/559/0b4/694/ee7/69'),
+    (5, 'accbc/b4965/92678/46e55/90b46/94ee7/69/info.json'),
+    (4, 'accb/cb49/6592/6784/6e55/90b4/694e/e769/info.json'),
+    (3, 'acc/bcb/496/592/678/46e/559/0b4/694/ee7/69/info.json'),
+    (5, '/home/foo/bar/accbc/b4965/92678/46e55/90b46/94ee7/69/info.json'),
+    (4, '/home/foo/bar/accb/cb49/6592/6784/6e55/90b4/694e/e769/info.json'),
+    (3, '/home/foo/bar/acc/bcb/496/592/678/46e/559/0b4/694/ee7/69/info.json'),
+    (5, '/home/foo/bar/accbc/b4965/92678/46e55/90b46/94ee7/69'),
+    (4, '/home/foo/bar/accb/cb49/6592/6784/6e55/90b4/694e/e769'),
+    (3, '/home/foo/bar/acc/bcb/496/592/678/46e/559/0b4/694/ee7/69'),
+])
+def test_cid(x, mock_os):
+    """
+    Given a path and segment length, when cid() is called, then it returns the
+    content ID of the path.
+    """
+    l, p = x
+    cid = 'accbcb49659267846e5590b4694ee769'
+    assert mod.cid(p, l) == cid
+
+
+@pytest.mark.parametrize('x', [
+    (5, 'accbc/b4965/92678/46e55/90b46/69'),
+    (4, 'accb/cb49/6592/6784/6e55/90b4/694e/'),
+    (3, '/bcb/496/592/678/46e/559/0b4/694/ee7/69'),
+    (3, '/foo/bar'),
+])
+def test_cid_partial(x):
+    """
+    Given partial path, or path that isn't a content directory path, when cid()
+    is called, then it returns None.
+    """
+    l, p = x
+    assert mod.cid(p, l) is None

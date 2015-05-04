@@ -10,7 +10,9 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
 from __future__ import division
 
+import re
 import os
+import itertools
 
 # Definitive rule for where to get the content pool directory
 POOLDIR = os.environ.get('OUTERNET_CONTENT', '.').rstrip(os.sep)
@@ -23,6 +25,8 @@ SEGLEN = 3
 
 # Characters allowd in paths
 PATHCHARS = '[0-9a-f]'
+
+# Regex that matches segmens of arbitrary length
 
 
 def fnwalk(path, fn, shallow=False):
@@ -123,3 +127,17 @@ def contentdir(cid, l=SEGLEN):
     exists
     """
     return os.path.join(POOLDIR, os.sep.join(splitseg(cid, l)))
+
+
+def cid(s, l=SEGLEN):
+    rem = CIDLEN % l
+    p = '({chr}{{{len}}}{sep})+{chr}{{{rem}}}'.format(
+        chr=PATHCHARS, sep=os.sep, len=l, rem=rem or l)
+    rx = re.compile(p)
+    m = rx.search(s)
+    if not m:
+        return None
+    cid = ''.join(s[m.start():m.end()].split(os.sep))
+    if len(cid) != CIDLEN:
+        return None
+    return cid
