@@ -29,7 +29,7 @@ DIRTREE = {
     'static/img/logo.png': None,
     'static/img/header.jpg': None,
     'static/img/bg.gif': None,
-    'static/css': ('style.css'),
+    'static/css': ('style.css',),
     'static/css/style.css': None,
     'articles': ('article1.html', 'article2.html', 'images'),
     'articles/article1.html': None,
@@ -61,6 +61,7 @@ def mock_os():
         mos.listdir = mock_listdir
         mos.sep = '/'
         mos.path.join = lambda x, y: '/'.join([x, y])
+        mos.path.isfile = lambda x: '.' in x[2:]
         yield mos
 
 
@@ -106,6 +107,15 @@ def test_fnwalk_match_self(mock_os):
         'articles/images/img1.svg',
         'articles/images/img2.jpg',
     ]
+
+
+def test_countwalk(mock_os):
+    """
+    Given a base path and matcher function, when countwalk() is called, then it
+    returns a count of all files for which the matcher returns True.
+    """
+    matcher = lambda p: p.endswith('.html')
+    assert mod.countwalk('.', matcher) == 3
 
 
 def test_splitseg():

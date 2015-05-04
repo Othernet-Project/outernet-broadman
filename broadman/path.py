@@ -64,6 +64,23 @@ def fnwalk(path, fn, shallow=False):
             yield child
 
 
+def countwalk(path, fn):
+    """
+    Walk directory tree top-down and count files that match the function.
+
+    The matcher function, ``fn``, must return ``True``, ``False``, 1 or 0.
+
+    This function returns an integer count of all matched files.
+    """
+    if os.path.isfile(path):
+        return fn(path)
+    names = os.listdir(path)
+    count = 0
+    for n in names:
+        count += countwalk(os.path.join(path, n), fn)
+    return count
+
+
 def splitseg(s, l=SEGLEN):
     """ Split the string into segments of given length. """
     while s:
