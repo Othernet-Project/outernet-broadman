@@ -222,11 +222,18 @@ class Print:
         kwargs.setdefault('file', self.err)
         self.print(*args, **kwargs)
 
+    def pverr(self, val, msg, *args, **kwargs):
+        kwargs.setdefault('file', self.err)
+        self.print('{}: {}'.format(val, msg), *args, **kwargs)
+
     def pverb(self, *args, **kwargs):
         """ Print verbose message to STDOUT """
         if not self.verbose:
             return
         self.pstd(*args, **kwargs)
+
+    def quit(self, code=0):
+        sys.exit(code)
 
     def read(self, prompt, clean=lambda x: x):
         """ Display a prompt and ask user for input
