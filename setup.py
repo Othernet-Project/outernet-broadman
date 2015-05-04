@@ -61,6 +61,7 @@ setup(
             'getcid = broadman.getcid:main',
             'filter = broadman.filterjson:main',
             'zimport = broadman.zimport:main',
+            'med = broadman.setmeta:main',
         ],
     },
     classifiers=[
