@@ -115,3 +115,11 @@ def pathrx(cid, l=SEGLEN):
         # Attach the tail
         rx += '/{}'.format(segrx(tail, ltail))
     return rx
+
+
+def contentdir(cid, l=SEGLEN):
+    """
+    Return a content directory matching content id regardless of whether it
+    exists
+    """
+    return os.path.join(POOLDIR, os.sep.join(splitseg(cid, l)))
