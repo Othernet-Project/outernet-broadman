@@ -212,6 +212,7 @@ class Console:
         self.out = stdout
         self.err = stderr
         signal.signal(signal.SIGINT, self.onint)
+        signal.signal(signal.SIGPIPE, self.onpipe)
 
     def print(self, *args, **kwargs):
         """ Thin wrapper around print
@@ -279,8 +280,19 @@ class Console:
                 if len(read) == chunk:
                     yield read
 
+    @property
+    def interm(self):
+        return hasattr(sys.stdin, 'isatty') and sys.stdin.isatty()
+
+    @property
+    def outterm(self):
+        return hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
+
     def onint(self, signum, exc):
-        self.pstd('\nQuitting program due to keyboard interrupt')
+        self.perr('\nQuitting program due to keyboard interrupt')
+        self.quit(1)
+
+    def onpipe(self, signup, exc):
         self.quit(1)
 
     def error(self, msg='Program error: {err}', exit=0):
