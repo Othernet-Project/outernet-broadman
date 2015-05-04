@@ -58,6 +58,7 @@ setup(
     entry_points={
         'console_scripts': [
             'getpath = broadman.getpath:main',
+            'getcid = broadman.getcid:main',
             'filter = broadman.filterjson:main',
             'zimport = broadman.zimport:main',
         ],
