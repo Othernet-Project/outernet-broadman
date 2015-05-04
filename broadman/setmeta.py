@@ -93,6 +93,10 @@ def check_args(data):
             check(k, v)
         except ValueError as err:
             if k == 'images':
+                # images are special-case, because the default validator will
+                # not allow negative values, but in this case we do allow them
+                # and handle them later to obtain correct count from files in
+                # the content directory.
                 continue
             errors[k] = err.args[0]
     if errors:
