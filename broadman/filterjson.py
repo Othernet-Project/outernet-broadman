@@ -17,22 +17,17 @@ import sys
 
 from . import jsonf
 from . import data
+from . import conz
 
-
-def fail(msg):
-    print(msg, file=sys.stderr)
-    sys.exit(1)
-
-
-def vfail(value, msg):
-    fail('{}: {}'.format(value, msg))
+pr = conz.Print()
 
 
 def load_file(path):
     try:
         return jsonf.load(path)
     except jsonf.LoadError:
-        vfail(path, 'bad metadata file')
+        pr.pverr(path, 'bad metadata file')
+        pr.quit(1)
 
 
 def domatch(path, args):
@@ -44,7 +39,7 @@ def domatch(path, args):
     d = load_file(infopath)
     if data.match(d, args.key, args.keyword, args.t, xmatch=args.x,
                   icase=args.i, gt=args.gt, lt=args.lt):
-        print(path)
+        pr.pstd(path)
 
 
 def main():
@@ -79,7 +74,8 @@ def main():
     args = parser.parse_args(sys.argv[1:])
 
     if sys.stdin.isatty():
-        domatch(args.path, args)
+        for path in args.paths:
+            domatch(path, args)
     else:
         path = sys.stdin.readline()
         while path:
