@@ -106,13 +106,29 @@ def check_args(data):
     return data
 
 
+def check_removals(removals):
+    errors = []
+    ok = []
+    for k in removals:
+        if k in validate.values.REQUIRED:
+            # Required keys cannot be removed
+            errors.append(k)
+        else:
+            ok.append(k)
+    if errors:
+        cn.perr(cn.color.yellow(
+            'WARNING: Required keys cannot be removed: {}'.format(
+                ', '.join(errors))))
+    return ok
+
+
 def count_imgs(p):
     if p.endswith('info.json'):
         p = os.path.dirname(p)
     return path.countwalk(p, isimg)
 
 
-def set_vals(p, data):
+def set_vals(p, data, removals):
     if not p.endswith('info.json'):
         p = os.path.join(p, 'info.json')
     meta = jsonf.load(p)
@@ -120,6 +136,10 @@ def set_vals(p, data):
         data['images'] = count_imgs(p)
         assert data['images'] >= 0, 'Expected positive image count'
     meta.update(data)
+    for k in removals:
+        if k in meta:
+            del meta[k]
+            assert k not in meta, 'Expected key to be removed'
     jsonf.save(p, meta)
 
 
@@ -162,10 +182,12 @@ def main():
     parser.add_argument('--keep_formatting', choices=['yes', 'no'],
                         help='set formatting flag')
     parser.add_argument('--delete', '-d', metavar='KEY', nargs='+',
-                        help='delete one or more keys')
+                        help='delete one or more keys (required keys cannot '
+                        'be removed)')
     args = parser.parse_args()
 
     data = check_args(convert_args(args))
+    removals = check_removals(args.delete)
 
     if cn.interm:
         if not args.paths:
@@ -178,9 +200,8 @@ def main():
     err = False
     for p in src:
         p = p.strip()
-        set_vals(p, data)
         try:
-            set_vals(p, data)
+            set_vals(p, data, removals)
             cn.pstd(cn.color.green('{} OK'.format(p)))
         except jsonf.LoadError:
             err = True
