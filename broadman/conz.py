@@ -12,6 +12,7 @@ from __future__ import print_function
 
 import os
 import sys
+import signal
 import contextlib
 
 
@@ -210,6 +211,7 @@ class Console:
         self.verbose = verbose
         self.out = stdout
         self.err = stderr
+        signal.signal(signal.SIGINT, self.onint)
 
     def print(self, *args, **kwargs):
         """ Thin wrapper around print
@@ -254,6 +256,10 @@ class Console:
         """
         ans = read(prompt + ' ')
         return clean(ans)
+
+    def onint(self, signum, exc):
+        self.pstd('\nQuitting program due to keyboard interrupt')
+        self.quit(1)
 
     def error(self, msg='Program error: {err}', exit=0):
         """ Error handler factory
@@ -333,6 +339,8 @@ class Console:
         except ProgressAbrt as err:
             if reraise:
                 raise err
+        except KeyboardInterrupt:
+            raise
         except excs as err:
             progress.abrt(noraise=True)
             if onerror:
