@@ -17,15 +17,15 @@ from . import jsonf
 from . import data
 from . import conz
 
-pr = conz.Console()
+cn = conz.Console()
 
 
 def load_file(path):
     try:
         return jsonf.load(path)
     except jsonf.LoadError:
-        pr.pverr(path, 'bad metadata file')
-        pr.quit(1)
+        cn.pverr(path, 'bad metadata file')
+        cn.quit(1)
 
 
 def domatch(path, args):
@@ -37,7 +37,7 @@ def domatch(path, args):
     d = load_file(infopath)
     if data.match(d, args.key, args.keyword, args.t, xmatch=args.x,
                   icase=args.i, gt=args.gt, lt=args.lt):
-        pr.pstd(path)
+        cn.pstd(path)
 
 
 def main():
