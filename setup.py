@@ -59,6 +59,7 @@ setup(
         'console_scripts': [
             'getpath = broadman.getpath:main',
             'filter = broadman.filterjson:main',
+            'zimport = broadman.zimport:main',
         ],
     },
     classifiers=[
