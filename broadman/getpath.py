@@ -15,7 +15,11 @@ from __future__ import print_function
 import re
 import os
 import sys
+
 from . import path
+from . import conz
+
+pr = conz.Console()
 
 CHUNK = 1000  # process no more than this many paths at once
 
@@ -28,11 +32,10 @@ def convert(*cids):
     fullrx = re.compile('^{}{}(?:{})$'.format(path.POOLDIR, os.sep, cidsrx))
     matcher = lambda p: fullrx.match(p)
     for p in path.fnwalk(path.POOLDIR, matcher, shallow=True):
-        print(os.path.abspath(p), file=sys.stdout)
+        pr.pstd(os.path.abspath(p))
 
 
 def main():
-    import sys
     from . import args
 
     parser = args.getparser(
@@ -53,4 +56,4 @@ def main():
                 convert(*cids)
                 cids = []
             if not cid:
-                sys.exit(0)
+                pr.quit(0)
