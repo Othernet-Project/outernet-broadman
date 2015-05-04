@@ -257,6 +257,28 @@ class Console:
         ans = read(prompt + ' ')
         return clean(ans)
 
+    def readpipe(self, chunk=None):
+        """ Return iterator that iterates over STDIN line by line
+
+        If ``chunk`` is set to a positive non-zero integer value, then the
+        reads are performed in chunks of that many lines, and returned as a
+        list. Otherwise the lines are returned one by one.
+        """
+        read = []
+        while True:
+            l = sys.stdin.readline()
+            if not l:
+                if read:
+                    yield read
+                    return
+                return
+            if not chunk:
+                yield l
+            else:
+                read.append(l)
+                if len(read) == chunk:
+                    yield read
+
     def onint(self, signum, exc):
         self.pstd('\nQuitting program due to keyboard interrupt')
         self.quit(1)
