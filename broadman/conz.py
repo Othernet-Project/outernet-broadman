@@ -225,11 +225,13 @@ class Console:
         """ Console to STDOUT """
         kwargs.setdefault('file', self.out)
         self.print(*args, **kwargs)
+        sys.stdout.flush()
 
     def perr(self, *args, **kwargs):
         """ Console to STERR """
         kwargs.setdefault('file', self.err)
         self.print(*args, **kwargs)
+        sys.stderr.flush()
 
     def pverr(self, val, msg, *args, **kwargs):
         kwargs.setdefault('file', self.err)
