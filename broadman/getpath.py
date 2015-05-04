@@ -12,7 +12,6 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
 import re
 import os
-import sys
 
 from . import path
 from . import conz
@@ -46,12 +45,5 @@ def main():
     if os.isatty(0):
         convert(*args.cids)
     else:
-        cids = []
-        while True:
-            cid = sys.stdin.readline()
-            cids.append(cid)
-            if len(cids) == CHUNK or not cid:
-                convert(*cids)
-                cids = []
-            if not cid:
-                pr.quit(0)
+        for cids in pr.readpipe(CHUNK):
+            convert(*cids)
