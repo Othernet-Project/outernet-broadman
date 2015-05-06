@@ -53,7 +53,7 @@ setup(
     packages=find_packages(),
     long_description=read('README.rst'),
     install_requires=[
-        'outernet-metadata>=0.1.dev1',
+        'outernet-metadata==0.4',
     ],
     entry_points={
         'console_scripts': [
