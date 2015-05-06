@@ -10,7 +10,6 @@ This software is free software licensed under the terms of GPLv3. See COPYING
 file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
-import re
 import os
 
 import conz
@@ -23,14 +22,8 @@ cn = conz.Console()
 CHUNK = 1000  # process no more than this many paths at once
 
 
-def convert(*cids):
-    if not cids:
-        cidsrx = path.pathrx('')
-    else:
-        cidsrx = '|'.join(path.pathrx(cid) for cid in cids)
-    fullrx = re.compile('^{}{}(?:{})$'.format(path.POOLDIR, os.sep, cidsrx))
-    matcher = lambda p: fullrx.match(p)
-    for p in path.fnwalk(path.POOLDIR, matcher, shallow=True):
+def convert(server, cids):
+    for p in path.find_contentdirs(cids, server=server):
         cn.pstd(os.path.abspath(p))
 
 
@@ -39,13 +32,17 @@ def main():
 
     parser = args.getparser(
         'Get content directory path from content ID',
-        usage='%(prog)s [-h] [-V] CID [CID...]\n       CID | %(prog)s')
+        usage='%(prog)s [options] CID [CID...]\n       '
+        'CID | %(prog)s [options]')
     parser.add_argument('cids', metavar='CID', nargs='*',
                         help='full or partial content ID')
+    parser.add_argument('--server', '-s', metavar='SERVER',
+                        help='server on which to look for paths (default: '
+                        '%(default)s', default='master')
     args = parser.parse_args()
 
     if os.isatty(0):
-        convert(*args.cids)
+        convert(args.server, args.cids)
     else:
         for cids in cn.readpipe(CHUNK):
-            convert(*cids)
+            convert(args.server, cids)

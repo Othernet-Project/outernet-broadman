@@ -52,8 +52,8 @@ def update_metadata(p):
 
 
 def ask_edit(p, errors):
-    ans = cn.read('Fix metadata? [Y/n]', clean=lambda x: x.lower()[:1])
-    if ans == 'n':
+    ans = cn.yesno('Fix metadata?', default=True)
+    if not ans:
         raise ValueError(errors)
     edit(p)
 
@@ -66,7 +66,7 @@ def check_metadata(p, interactive=False):
     if errors and not interactive:
         raise ValueError(errors)
     for k, v in errors.items():
-        cn.perr('{}: {}'.format(cn.color.red(k), v))
+        cn.pverr(cn.color.red(k), v)
     ask_edit(p, errors)
     check_metadata(p, interactive)
 
