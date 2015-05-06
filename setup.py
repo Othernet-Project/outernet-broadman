@@ -54,6 +54,7 @@ setup(
     long_description=read('README.rst'),
     install_requires=[
         'outernet-metadata==0.4',
+        'conz==0.3',
     ],
     entry_points={
         'console_scripts': [
