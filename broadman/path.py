@@ -12,6 +12,13 @@ from __future__ import division
 
 import re
 import os
+import scandir
+
+
+try:
+    FILE_ERRORS = (IOError, OSError, FileNotFoundError)
+except NameError:
+    FILE_ERRORS = (IOError, OSError)
 
 # Definitive rule for where to get the content pool directory
 POOLDIR = os.environ.get('OUTERNET_CONTENT', '.').rstrip(os.sep)
@@ -19,13 +26,14 @@ POOLDIR = os.environ.get('OUTERNET_CONTENT', '.').rstrip(os.sep)
 # Default content ID length
 CIDLEN = 32
 
-# Default path segment length
-SEGLEN = 3
-
 # Characters allowd in paths
 PATHCHARS = '[0-9a-f]'
 
-# Regex that matches segmens of arbitrary length
+# Regexp to match content ID
+CIDRE = re.compile('%(pc)s{%(len)s}' % {'pc': PATHCHARS, 'len': CIDLEN})
+
+# Default server directory
+DEFAULT_SERVER = 'master'
 
 
 def fnwalk(path, fn, shallow=False):
@@ -55,12 +63,12 @@ def fnwalk(path, fn, shallow=False):
             return
 
     try:
-        names = os.listdir(path)
+        entries = scandir.scandir(path)
     except OSError:
         return
 
-    for name in names:
-        for child in fnwalk(os.path.join(path, name), fn, shallow):
+    for entry in entries:
+        for child in fnwalk(entry.path, fn, shallow):
             yield child
 
 
@@ -72,23 +80,16 @@ def countwalk(path, fn):
 
     This function returns an integer count of all matched files.
     """
-    if os.path.isfile(path):
-        return fn(path)
-    names = os.listdir(path)
     count = 0
-    for n in names:
-        count += countwalk(os.path.join(path, n), fn)
+    for e in scandir.scandir(path):
+        if e.is_file():
+            count += fn(e.name)
+        else:
+            count += countwalk(e.path, fn)
     return count
 
 
-def splitseg(s, l=SEGLEN):
-    """ Split the string into segments of given length. """
-    while s:
-        yield s[:l]
-        s = s[l:]
-
-
-def segrx(s, l=SEGLEN):
+def cidrx(s, l=CIDLEN):
     """
     Return a pattern that matches full or partial path segment of given length
     """
@@ -101,59 +102,41 @@ def segrx(s, l=SEGLEN):
     return s + '%s{%s}' % (PATHCHARS, l - lens)
 
 
-def pathrx(cid, l=SEGLEN):
+def serverdir(server=DEFAULT_SERVER):
     """
-    Return a regex pattern that matches content path for content ID.
-
-    `cid`` can be either a full or a partial content ID. Using full content ID
-    returns a pattern that is equivalent of simply segmenting the path using
-    ``splitseg()`` and joining with the default path separator.
+    Return server directory.
     """
-    if len(cid) == CIDLEN:
-        # This is a special case where we got a full CID, so there's no regular
-        # expressions to create
-        return os.sep.join(splitseg(cid, l))
-    ltail = CIDLEN % l
-    lhead = CIDLEN - ltail
-    totsegs = CIDLEN // l
-    # Split the CID into head and tail portions
-    head = cid[:lhead]
-    tail = cid[lhead:]
-    # Convert head to segments
-    segs = [segrx(s, l) for s in splitseg(head, l)]
-    nsegs = len(segs)
-    if not nsegs:
-        segs.append(segrx('', l))
-        nsegs = 1
-    fullseg_missing = totsegs - nsegs
-    # Construct the regex
-    rx = os.sep.join(segs)
-    if fullseg_missing:
-        # Addd any missing full segments
-        rx += '(?:/%s){%s}' % (segrx('', l), fullseg_missing)
-    if ltail:
-        # Attach the tail
-        rx += '/{}'.format(segrx(tail, ltail))
-    return rx
+    return os.path.join(POOLDIR, server)
 
 
-def contentdir(cid, l=SEGLEN):
+def contentdir(cid, server=DEFAULT_SERVER):
     """
     Return a content directory matching content id regardless of whether it
     exists
     """
-    return os.path.join(POOLDIR, os.sep.join(splitseg(cid, l)))
+    return os.path.join(serverdir(server), cid)
 
 
-def cid(s, l=SEGLEN):
-    rem = CIDLEN % l
-    p = '({chr}{{{len}}}{sep})+{chr}{{{rem}}}'.format(
-        chr=PATHCHARS, sep=os.sep, len=l, rem=rem or l)
-    rx = re.compile(p)
-    m = rx.search(s)
+def cid(s):
+    """
+    Extract content ID from given string.
+    """
+    m = CIDRE.search(s)
     if not m:
         return None
-    cid = ''.join(s[m.start():m.end()].split(os.sep))
-    if len(cid) != CIDLEN:
-        return None
-    return cid
+    return s[m.start():m.end()]
+
+
+def find_contentdirs(cids, server=DEFAULT_SERVER):
+    if not cids:
+        cidsrx = cidrx('')
+    else:
+        cidsrx = '|'.join(cidrx(cid) for cid in cids)
+    cidsrx = re.compile(cidsrx)
+    sd = serverdir(server)
+    try:
+        for entry in scandir.scandir(sd):
+            if cidsrx.search(entry.name):
+                yield entry.path
+    except FILE_ERRORS:
+        return

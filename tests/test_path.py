@@ -40,15 +40,36 @@ DIRTREE = {
 }
 
 
+def mock_direntry(name, base_path):
+    d = mock.Mock()
+    d.path = '/'.join([base_path, name])
+    d.name = name
+    d.is_file.side_effect = lambda: '.' in name
+    return d
+
+
 # Simplified simulation of os.listdir()
-def mock_listdir(path):
+def mock_scan(path):
+    base_path = path
     if path.startswith('./'):
         path = path[2:]
     contents = DIRTREE.get(path)
-    print(path, contents)
     if contents is None:
         raise OSError()
+    contents = [mock_direntry(n, base_path) for n in contents]
+    print(path, contents)
     return contents
+
+
+@pytest.yield_fixture
+def mock_scandir():
+    """
+    Rigged version of scandir module that uses mock directory structure instead
+    of a real one.
+    """
+    with mock.patch(MOD + '.scandir') as msc:
+        msc.scandir = mock_scan
+        yield msc
 
 
 @pytest.yield_fixture
@@ -58,14 +79,13 @@ def mock_os():
     a real one.
     """
     with mock.patch(MOD + '.os') as mos:
-        mos.listdir = mock_listdir
+        mos = mock.Mock()
         mos.sep = '/'
         mos.path.join = lambda x, y: '/'.join([x, y])
-        mos.path.isfile = lambda x: '.' in x[2:]
         yield mos
 
 
-def test_fnwalk(mock_os):
+def test_fnwalk(mock_scandir):
     """
     Given base path and a matcher function, when fnwalk() is called, it returns
     an iterator that yields paths for which matcher returns True.
@@ -81,7 +101,7 @@ def test_fnwalk(mock_os):
     ]
 
 
-def test_fnwalk_shallow(mock_os):
+def test_fnwalk_shallow(mock_scandir):
     """
     Given a base path and matcher function, when fnwalk() is called with sallow
     flag, then it returns an iterator that yields only the first path matched.
@@ -92,7 +112,7 @@ def test_fnwalk_shallow(mock_os):
     ]
 
 
-def test_fnwalk_match_self(mock_os):
+def test_fnwalk_match_self(mock_scandir):
     """
     Given a base path and matcher function that matches the base path, when
     fnwalk() is called, it returns an iterator that yields base path, in
@@ -109,7 +129,7 @@ def test_fnwalk_match_self(mock_os):
     ]
 
 
-def test_countwalk(mock_os):
+def test_countwalk(mock_scandir):
     """
     Given a base path and matcher function, when countwalk() is called, then it
     returns a count of all files for which the matcher returns True.
@@ -118,131 +138,62 @@ def test_countwalk(mock_os):
     assert mod.countwalk('.', matcher) == 3
 
 
-def test_splitseg():
+def test_cidrx():
     """
-    Given a string, and segment length, when splitseg() is called, then it
-    returns an iterator yielding the segments from the string of specified
-    length.
-    """
-    assert list(mod.splitseg('foobar', 2)) == ['fo', 'ob', 'ar']
-
-
-def test_splitseg_default_len():
-    """
-    Given a string and no segment length, when splitseg() is caleld, then it
-    yields segments 3 characters long.
-    """
-    assert list(mod.splitseg('foobar')) == ['foo', 'bar']
-
-
-def test_segrx():
-    """
-    Given a string and a length, when segrx() is called, then it returns a
+    Given a string and a length, when cidrx() is called, then it returns a
     regular expression fragment that matches a segment of a path of specified
     length where the first part of the segment is given by the string.
     """
-    assert mod.segrx('a1', 4) == 'a1[0-9a-f]{2}'
+    assert mod.cidrx('a1', 4) == 'a1[0-9a-f]{2}'
 
 
-def test_segrx_default_len():
+def test_cidrx_default_len():
     """
-    Given a string and no length, when segrx() is called, then it returns a
+    Given a string and no length, when cidrx() is called, then it returns a
     regular expression fragment that matches a segments 3 characters long.
     """
-    assert mod.segrx('a1') == 'a1[0-9a-f]{1}'
+    assert mod.cidrx('a1') == 'a1[0-9a-f]{30}'
 
 
-def test_segrx_zerolen():
+def test_cidrx_zerolen():
     """
-    Given a length that is zero or negative number, when segrx() is called,
+    Given a length that is zero or negative number, when cidrx() is called,
     then it returns an empty string.
     """
-    assert mod.segrx('a1', 0) == ''
-    assert mod.segrx('a1', -1) == ''
+    assert mod.cidrx('a1', 0) == ''
+    assert mod.cidrx('a1', -1) == ''
 
 
-def test_segrx_no_string():
+def test_cidrx_no_string():
     """
-    Given no string, when segrx() is called, then it returns a regular
+    Given no string, when cidrx() is called, then it returns a regular
     expression framgent that matches any segment of given length.
     """
-    assert mod.segrx('') == '[0-9a-f]{3}'
+    assert mod.cidrx('') == '[0-9a-f]{32}'
 
 
 @pytest.mark.parametrize('x', [
-    (5, 'accbc/b4965/926[0-9a-f]{2}(?:/[0-9a-f]{5}){3}/[0-9a-f]{2}'),
-    (4, 'accb/cb49/6592/6[0-9a-f]{3}(?:/[0-9a-f]{4}){4}'),
-    (3, 'acc/bcb/496/592/6[0-9a-f]{2}(?:/[0-9a-f]{3}){5}/[0-9a-f]{2}'),
-])
-def test_pathrx(x, mock_os):
-    """
-    Given partial content ID and segment length, when pathrx() is called, then
-    it returns a regular expression pattern that matches the full content
-    directory path.
-    """
-    l, rx = x
-    cid = 'accbcb4965926'
-    assert mod.pathrx(cid, l) == rx
-
-
-@pytest.mark.parametrize('x', [
-    (5, 'accbc/b4965/92678/46e55/90b46/94ee7/69'),
-    (4, 'accb/cb49/6592/6784/6e55/90b4/694e/e769'),
-    (3, 'acc/bcb/496/592/678/46e/559/0b4/694/ee7/69'),
-])
-def test_pathrx_full_id(x, mock_os):
-    """
-    Given full content ID and segment length, when pathrx() is called, then it
-    returns a cotent ID that is segmented and concatenated using defalt OS
-    separator.
-    """
-    l, rx = x
-    cid = 'accbcb49659267846e5590b4694ee769'
-    assert mod.pathrx(cid, l) == rx
-
-
-def test_pathrx_empty_path(mock_os):
-    """
-    Given no content ID, when pathrx() is called, then it returns a pattern
-    that would match any and all content directories.
-    """
-    assert mod.pathrx('') == '[0-9a-f]{3}(?:/[0-9a-f]{3}){9}/[0-9a-f]{2}'
-
-
-@pytest.mark.parametrize('x', [
-    (5, 'accbc/b4965/92678/46e55/90b46/94ee7/69'),
-    (4, 'accb/cb49/6592/6784/6e55/90b4/694e/e769'),
-    (3, 'acc/bcb/496/592/678/46e/559/0b4/694/ee7/69'),
-    (5, 'accbc/b4965/92678/46e55/90b46/94ee7/69/info.json'),
-    (4, 'accb/cb49/6592/6784/6e55/90b4/694e/e769/info.json'),
-    (3, 'acc/bcb/496/592/678/46e/559/0b4/694/ee7/69/info.json'),
-    (5, '/home/foo/bar/accbc/b4965/92678/46e55/90b46/94ee7/69/info.json'),
-    (4, '/home/foo/bar/accb/cb49/6592/6784/6e55/90b4/694e/e769/info.json'),
-    (3, '/home/foo/bar/acc/bcb/496/592/678/46e/559/0b4/694/ee7/69/info.json'),
-    (5, '/home/foo/bar/accbc/b4965/92678/46e55/90b46/94ee7/69'),
-    (4, '/home/foo/bar/accb/cb49/6592/6784/6e55/90b4/694e/e769'),
-    (3, '/home/foo/bar/acc/bcb/496/592/678/46e/559/0b4/694/ee7/69'),
+    'accbcb49659267846e5590b4694ee769',
+    '/home/foo/bar/accbcb49659267846e5590b4694ee769/info.json',
+    '/home/foo/bar/accbcb49659267846e5590b4694ee769',
+    pytest.mark.xfail('foobar'),
 ])
 def test_cid(x, mock_os):
     """
     Given a path and segment length, when cid() is called, then it returns the
     content ID of the path.
     """
-    l, p = x
     cid = 'accbcb49659267846e5590b4694ee769'
-    assert mod.cid(p, l) == cid
+    assert mod.cid(x) == cid
 
 
-@pytest.mark.parametrize('x', [
-    (5, 'accbc/b4965/92678/46e55/90b46/69'),
-    (4, 'accb/cb49/6592/6784/6e55/90b4/694e/'),
-    (3, '/bcb/496/592/678/46e/559/0b4/694/ee7/69'),
-    (3, '/foo/bar'),
-])
-def test_cid_partial(x):
+def test_contentdir(monkeypatch):
     """
-    Given partial path, or path that isn't a content directory path, when cid()
-    is called, then it returns None.
+    Given content ID and content section name, when contentdir() is called,
+    then it returns a full path to the content directory'.
     """
-    l, p = x
-    assert mod.cid(p, l) is None
+    monkeypatch.setattr(mod, 'POOLDIR', 'foo')
+    cid = 'accbcb49659267846e5590b4694ee769'
+    server = 'bar'
+    expected = 'foo/bar/accbcb49659267846e5590b4694ee769'
+    assert mod.contentdir(cid, server) == expected
