@@ -10,16 +10,17 @@ This software is free software licensed under the terms of GPLv3. See COPYING
 file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
-from . import path
-from . import conz
+import conz
 
-pr = conz.Console()
+from . import path
+
+cn = conz.Console()
 
 
 def convert(p):
     cid = path.cid(p)
     if cid:
-        pr.pstd(cid)
+        cn.pstd(cid)
 
 
 def main():
@@ -37,7 +38,7 @@ def main():
         for p in args.paths:
             convert(p)
     else:
-        for p in pr.readpipe():
+        for p in cn.readpipe():
             convert(p.strip())
 
 

@@ -12,13 +12,14 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
 import os
 
-from outernet_metadata import validate
+import conz
 from validators import make_chain
+from outernet_metadata import validate
 
-from . import conz
 from . import data
 from . import path
 from . import jsonf
+
 
 cn = conz.Console()
 

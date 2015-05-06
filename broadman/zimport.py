@@ -16,17 +16,18 @@ import shutil
 import tempfile
 import subprocess
 
-from outernet_metadata import validate
+import conz
 from outernet_metadata import values
+from outernet_metadata import validate
 
 from . import jsonf
 from . import path
-from . import conz
 from . import zips
+
 
 EDITOR = os.environ.get('EDITOR', 'vi')
 
-pr = conz.Console()
+cn = conz.Console()
 
 
 def edit(p):
@@ -51,7 +52,7 @@ def update_metadata(p):
 
 
 def ask_edit(p, errors):
-    ans = pr.read('Fix metadata? [Y/n]', clean=lambda x: x.lower()[:1])
+    ans = cn.read('Fix metadata? [Y/n]', clean=lambda x: x.lower()[:1])
     if ans == 'n':
         raise ValueError(errors)
     edit(p)
@@ -65,7 +66,7 @@ def check_metadata(p, interactive=False):
     if errors and not interactive:
         raise ValueError(errors)
     for k, v in errors.items():
-        pr.perr('{}: {}'.format(pr.color.red(k), v))
+        cn.perr('{}: {}'.format(cn.color.red(k), v))
     ask_edit(p, errors)
     check_metadata(p, interactive)
 
@@ -84,42 +85,42 @@ def copy_files(srcdir, targetdir):
 
 
 def doimport(p, interactive=False):
-    pr.pverb('Importing from {}'.format(p))
+    cn.pverb('Importing from {}'.format(p))
     tmpdir = tempfile.mkdtemp()
     hash = zips.zcid(p)
     infpath = os.path.join(tmpdir, hash, 'info.json')
     target_path = path.contentdir(hash)
     warnings = False
     try:
-        with pr.progress('Preparing target directory') as prg:
+        with cn.progress('Preparing target directory') as prg:
             try:
                 prep_target(target_path)
             except RuntimeError:
-                prg.abrt(post=lambda: pr.perr('Target already exists'))
-        with pr.progress('Checking zip file', 'Invalid zip file: {err}'):
+                prg.abrt(post=lambda: cn.perr('Target already exists'))
+        with cn.progress('Checking zip file', 'Invalid zip file: {err}'):
             zips.check(p)
-        with pr.progress('Unpacking zip content', 'Invalid zip file: {err}'):
+        with cn.progress('Unpacking zip content', 'Invalid zip file: {err}'):
             zips.unzip(p, tmpdir)
-        with pr.progress('Updating metadata', 'Invalid metadata file'):
+        with cn.progress('Updating metadata', 'Invalid metadata file'):
             update_metadata(infpath)
-        with pr.progress('Checking metadata', 'Invalid metadata'):
+        with cn.progress('Checking metadata', 'Invalid metadata'):
             try:
-                check_metadata(infpath, pr.verbose)
+                check_metadata(infpath, cn.verbose)
             except ValueError:
                 warnings = True
-                pr.perr('{} invalid metadata data'.format(hash))
-        with pr.progress('Copying files'):
+                cn.perr('{} invalid metadata data'.format(hash))
+        with cn.progress('Copying files'):
             shutil.copytree(os.path.join(tmpdir, hash), target_path)
-        with pr.progress('Cleaning up'):
+        with cn.progress('Cleaning up'):
             shutil.rmtree(tmpdir)
         if warnings:
-            pr.pstd(pr.color.yellow('{} WARN'.format(p)))
+            cn.pstd(cn.color.yellow('{} WARN'.format(p)))
         else:
-            pr.pstd(pr.color.green('{} OK'.format(p)))
-    except pr.ProgressAbrt:
-        pr.pstd(pr.color.red('{} ERR'.format(p)))
+            cn.pstd(cn.color.green('{} OK'.format(p)))
+    except cn.ProgressAbrt:
+        cn.pstd(cn.color.red('{} ERR'.format(p)))
         shutil.rmtree(tmpdir)
-        if pr.verbose:
+        if cn.verbose:
             sys.exit(1)
 
 
@@ -136,7 +137,7 @@ def main():
     args = parser.parse_args()
 
     if sys.stdin.isatty():
-        pr.verbose = True
+        cn.verbose = True
         if not args.path:
             parser.print_help()
             sys.exit(0)

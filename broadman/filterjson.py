@@ -12,9 +12,10 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
 import os
 
+import conz
+
 from . import jsonf
 from . import data
-from . import conz
 
 cn = conz.Console()
 
