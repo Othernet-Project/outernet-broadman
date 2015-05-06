@@ -48,7 +48,7 @@ setup(
     author_email='apps@outernet.is',
     description='Tools for broadcast management',
     license='GPLv3',
-    keywords='json, validation, templates, metadata, outernet',
+    keywords='broadcast management, outernet, content, zip, json',
     url='https://github.com/Outernet-Project/outernet-broadman',
     packages=find_packages(),
     long_description=read('README.rst'),
