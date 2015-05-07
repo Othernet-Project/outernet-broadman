@@ -107,9 +107,11 @@ def check_args(data):
     return data
 
 
-def check_removals(removals):
+def check_removals(removals=None):
     errors = []
     ok = []
+    if removals is None:
+        return ok
     for k in removals:
         if k in validate.values.REQUIRED:
             # Required keys cannot be removed
