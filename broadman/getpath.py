@@ -22,8 +22,10 @@ cn = conz.Console()
 CHUNK = 1000  # process no more than this many paths at once
 
 
-def convert(server, cids):
+def convert(server, cids, meta_path=False):
     for p in path.find_contentdirs(cids, server=server):
+        if meta_path:
+            p = os.path.join(p, 'info.json')
         cn.pstd(os.path.abspath(p))
 
 
@@ -39,10 +41,13 @@ def main():
     parser.add_argument('--server', '-s', metavar='SERVER',
                         help='server on which to look for paths (default: '
                         '%(default)s', default='master')
+    parser.add_argument('--meta', '-m', action='store_true',
+                        help='print path to metadata file instead of content '
+                        'directory')
     args = parser.parse_args()
 
     if os.isatty(0):
-        convert(args.server, args.cids)
+        convert(args.server, args.cids, args.meta)
     else:
         for cids in cn.readpipe(CHUNK):
-            convert(args.server, cids)
+            convert(args.server, cids, args.meta)
