@@ -54,7 +54,7 @@ setup(
     long_description=read('README.rst'),
     install_requires=[
         'outernet-metadata==0.4.post3',
-        'conz>=0.3',
+        'conz>=0.4',
         'scandir==0.9',
     ],
     entry_points={
@@ -64,6 +64,7 @@ setup(
             'filter = broadman.filterjson:main',
             'zimport = broadman.zimport:main',
             'med = broadman.setmeta:main',
+            'mcat = broadman.catmeta:main',
         ],
     },
     classifiers=[
