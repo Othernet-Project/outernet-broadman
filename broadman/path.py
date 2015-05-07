@@ -140,3 +140,16 @@ def find_contentdirs(cids, server=DEFAULT_SERVER):
                 yield entry.path
     except FILE_ERRORS:
         return
+
+
+def infopath(path):
+    """
+    Returns path to info.json
+
+    If ``path`` points to content directory, then full path to info.json file
+    is returned. If ``path`` already points to info.json, then it is returned
+    as is.
+    """
+    if os.path.basename(path) == 'info.json':
+        return path
+    return os.path.join(path, 'info.json')
