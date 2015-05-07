@@ -1,9 +1,0 @@
-search_info.sh v0.1
-
-Obtain hashes of conent whose metadata match lookup criteria
-
-Uage:
-    search_info.sh KEYWORD
-
-Parameters:
-    KEYWORD     search keyword
