@@ -130,11 +130,15 @@ def main():
     parser = args.getparser(
         'Import existing content zipball into content pool',
         usage='%(prog)s [-h] [-V] [-v] PATH\n'
-        '       PATH | %(prog)s [-h] [-V]')
+        '       PATH | %(prog)s [-h] [-V]',
+        has_debug=True)
 
     parser.add_argument('path', metavar='PATH', nargs='?',
                         help='path to zipball')
     args = parser.parse_args()
+
+    if args.debug:
+        cn.debug = True
 
     if sys.stdin.isatty():
         cn.verbose = True
