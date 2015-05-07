@@ -14,30 +14,31 @@ import os
 
 import conz
 
-from . import jsonf
+from . import path
 from . import data
+from . import jsonf
 
 cn = conz.Console()
 
 
-def load_file(path):
+def load_file(p):
     try:
-        return jsonf.load(path)
+        return jsonf.load(p)
     except jsonf.LoadError:
-        cn.pverr(path, 'bad metadata file')
+        cn.pverr(p, 'bad metadata file')
         cn.quit(1)
 
 
-def domatch(path, args):
-    path = path.strip()
-    if not os.path.basename(path) == 'info.json':
-        infopath = os.path.join(path, 'info.json')
+def domatch(p, args):
+    p = path.infopath(p)
+    if not os.path.basename(p) == 'info.json':
+        infopath = os.path.join(p, 'info.json')
     else:
-        infopath = path
+        infopath = p
     d = load_file(infopath)
     if data.match(d, args.key, args.keyword, args.t, xmatch=args.x,
                   icase=args.i, gt=args.gt, lt=args.lt):
-        cn.pstd(path)
+        cn.pstd(p)
 
 
 def main():
@@ -77,7 +78,7 @@ def main():
         src = cn.readpipe()
 
     for p in src:
-        domatch(p, args)
+        domatch(p.strip(), args)
 
 
 if __name__ == '__main__':
