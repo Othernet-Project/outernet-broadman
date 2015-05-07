@@ -14,7 +14,6 @@ import os
 import sys
 import shutil
 import tempfile
-import subprocess
 
 import conz
 from outernet_metadata import values
@@ -23,15 +22,10 @@ from outernet_metadata import validate
 from . import jsonf
 from . import path
 from . import zips
+from . import editor
 
-
-EDITOR = os.environ.get('EDITOR', 'vi')
 
 cn = conz.Console()
-
-
-def edit(p):
-    subprocess.call([EDITOR, p])
 
 
 def update_metadata(p):
@@ -55,7 +49,7 @@ def ask_edit(p, errors):
     ans = cn.yesno('Fix metadata?', default=True)
     if not ans:
         raise ValueError(errors)
-    edit(p)
+    editor.edit(p)
 
 
 def check_metadata(p, interactive=False):
