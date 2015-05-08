@@ -53,7 +53,7 @@ setup(
     packages=find_packages(),
     long_description=read('README.rst'),
     install_requires=[
-        'outernet-metadata==0.4.post3',
+        'outernet-metadata==0.4.post4',
         'conz>=0.4',
         'scandir==0.9',
     ],
