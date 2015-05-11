@@ -66,3 +66,10 @@ def commit_add_to_server(p, server, repo=path.POOLDIR):
     cid = path.cid(p)
     msg = 'Added {} -> {}'.format(cid, server)
     commit(p, action='ADD', msg=msg, extra_data=[server])
+
+
+def commit_remove_from_server(p, server, repo=path.POOLDIR):
+    git('rm', '--cached', p)
+    cid = path.cid(p)
+    msg = 'Removed {} <- {}'.format(cid, server)
+    commit(p, action='DEL', msg=msg, extra_data=[server])
