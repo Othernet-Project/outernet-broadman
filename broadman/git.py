@@ -9,6 +9,7 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
 import os
+import sys
 import subprocess
 
 from . import path
@@ -31,8 +32,8 @@ def git(*cmd, **kwargs):
                          stderr=subprocess.PIPE)
     p.wait()
     if p.returncode != 0:
-        raise GitError(p.stderr.read())
-    return p.stdout.read()
+        raise GitError(p.stderr.read().decode(sys.stderr.encoding))
+    return p.stdout.read().decode(sys.stdout.encoding)
 
 
 def init(repo=path.POOLDIR):
