@@ -46,13 +46,16 @@ def validate_servers(servers, create=False):
 
 def add_to_servers(cid, servers):
     """ Add content with given cid to the server """
-    cid = path.cid(cid)
     cdir = path.contentdir(cid)
     ipath = path.infopath(cdir)
+    # We only let content that has been fully updated to be added
+    if git.has_changes(cdir):
+        raise RuntimeError('content has pending changes, please update first')
+    # We let the exception from validation propagate up to the caller, and
+    # caller is expected to handle this.
+    if validate.validate(jsonf.load(ipath)):
+        raise RuntimeError('content contains invalid metadata')
     for s in servers:
-        # We let the exception from validation propagate up to the caller, and
-        # caller is expected to handle this.
-        validate.validate(jsonf.load(ipath))
         target = path.contentdir(cid, server=s)
         if not os.path.islink(target):
             os.symlink(cdir, target)
@@ -88,10 +91,11 @@ def main():
         src = args.readpipe()
 
     for cid in src:
+        cid = path.cid(cid)
         try:
             add_to_servers(cid, servers=args.servers)
             cn.pstd(cn.color.green('{}: OK'.format(cid)))
-        except (ValueError, jsonf.LoadError) as e:
+        except (jsonf.LoadError, RuntimeError) as e:
             cn.pverr(cid, e)
             cn.pstd(cn.color.red('{}: ERR'.format(cid)))
 
