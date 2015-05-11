@@ -26,9 +26,8 @@ class GitError(Exception):
 
 
 def git(*cmd, **kwargs):
-    repo = kwargs.pop('repo', path.POOLDIR)
     cmd = ('git',) + cmd
-    p = subprocess.Popen(cmd, cwd=repo, stdout=subprocess.PIPE,
+    p = subprocess.Popen(cmd, cwd=path.POOLDIR, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
     p.wait()
     if p.returncode != 0:
@@ -36,9 +35,9 @@ def git(*cmd, **kwargs):
     return p.stdout.read().decode(sys.stdout.encoding)
 
 
-def init(repo=path.POOLDIR):
+def init():
     git('init')
-    vfile = os.path.join(repo, '.version')
+    vfile = os.path.join(path.POOLDIR, '.version')
     with open(vfile, 'w') as f:
         f.write(__version__ + '\n')
     git('add', vfile)
@@ -46,7 +45,7 @@ def init(repo=path.POOLDIR):
         'Initialized content pool')
 
 
-def commit(p, action, msg=None, extra_data=[], noadd=False, repo=path.POOLDIR):
+def commit(p, action, msg=None, extra_data=[], noadd=False):
     if not noadd:
         git('add', p)
     cid = path.cid(p)
@@ -58,17 +57,17 @@ def commit(p, action, msg=None, extra_data=[], noadd=False, repo=path.POOLDIR):
     git('commit', '-m', cmsg)
 
 
-def commit_import(p, repo=path.POOLDIR):
+def commit_import(p):
     commit(p, action='IMP', msg='Imported new content')
 
 
-def commit_add_to_server(p, server, repo=path.POOLDIR):
+def commit_add_to_server(p, server):
     cid = path.cid(p)
     msg = 'Added {} -> {}'.format(cid, server)
     commit(p, action='ADD', msg=msg, extra_data=[server])
 
 
-def commit_remove_from_server(p, server, repo=path.POOLDIR):
+def commit_remove_from_server(p, server):
     git('rm', '--cached', p)
     cid = path.cid(p)
     msg = 'Removed {} <- {}'.format(cid, server)
