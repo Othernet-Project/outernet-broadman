@@ -65,6 +65,7 @@ setup(
             'zimport = broadman.zimport:main',
             'med = broadman.setmeta:main',
             'mcat = broadman.catmeta:main',
+            'pinit = broadman.initrepo:main',
         ],
     },
     classifiers=[
