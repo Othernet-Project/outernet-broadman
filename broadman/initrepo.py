@@ -33,7 +33,7 @@ def create_pool():
     if not os.path.isdir(pooldir):
         cn.pverr(pooldir, 'Path exists but is not a directory')
         cn.quit(1)
-    git.init(pooldir)
+    git.init()
 
 
 def main():
