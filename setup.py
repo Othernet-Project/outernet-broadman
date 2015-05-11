@@ -56,6 +56,7 @@ setup(
         'outernet-metadata==0.4.post4',
         'conz>=0.4',
         'scandir==0.9',
+        'dulwich==0.10.0',
     ],
     entry_points={
         'console_scripts': [
