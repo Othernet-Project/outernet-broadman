@@ -46,10 +46,12 @@ def init(repo=path.POOLDIR):
         'Initialized content pool')
 
 
-def commit(p, action, msg=None, repo=path.POOLDIR):
+def commit(p, action, msg=None, extra_data=[], repo=path.POOLDIR):
     git('add', p)
     cid = path.cid(p)
-    cmsg = '{} {} {}'.format(MSG_MARKER, action, cid)
+    cmsg = [MSG_MARKER, action, cid]
+    cmsg.extend(extra_data)
+    cmsg = ' '.join(cmsg)
     if msg:
         cmsg += '\n\n' + msg
     git('commit', '-m', cmsg)
