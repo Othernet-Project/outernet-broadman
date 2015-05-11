@@ -67,6 +67,7 @@ setup(
             'mcat = broadman.catmeta:main',
             'pinit = broadman.initrepo:main',
             'srvadd = broadman.serveradd:main',
+            'srvdel = broadman.serverdel:main',
         ],
     },
     classifiers=[
