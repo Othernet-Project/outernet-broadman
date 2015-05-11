@@ -72,3 +72,9 @@ def commit_remove_from_server(p, server):
     cid = path.cid(p)
     msg = 'Removed {} <- {}'.format(cid, server)
     commit(p, action='DEL', msg=msg, extra_data=[server], noadd=True)
+
+
+def has_changes(p):
+    """ Check whether some path contains changes """
+    st = git('status', '-s', p)
+    return st != ''
