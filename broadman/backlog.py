@@ -81,6 +81,7 @@ def cdel(cid, server):
     ret = has_cid(cid, server)
     if not ret:
         write_backlog(msg)
+        return
     if ret[0] == 'ADD':
         # Just rever the add
         rem_cid(cid, server)
