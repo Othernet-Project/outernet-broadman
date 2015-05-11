@@ -72,4 +72,4 @@ def commit_remove_from_server(p, server, repo=path.POOLDIR):
     git('rm', '--cached', p)
     cid = path.cid(p)
     msg = 'Removed {} <- {}'.format(cid, server)
-    commit(p, action='DEL', msg=msg, extra_data=[server])
+    commit(p, action='DEL', msg=msg, extra_data=[server], noadd=True)
