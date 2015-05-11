@@ -59,3 +59,9 @@ def commit(p, action, msg=None, extra_data=[], repo=path.POOLDIR):
 
 def commit_import(p, repo=path.POOLDIR):
     commit(p, action='IMP', msg='Imported new content')
+
+
+def commit_add_to_server(p, server, repo=path.POOLDIR):
+    cid = path.cid(p)
+    msg = 'Added {} -> {}'.format(cid, server)
+    commit(p, action='ADD', msg=msg, extra_data=[server])
