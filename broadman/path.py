@@ -23,6 +23,9 @@ except NameError:
 # Definitive rule for where to get the content pool directory
 POOLDIR = os.environ.get('OUTERNET_CONTENT', '.').rstrip(os.sep)
 
+# Path to backlog file
+BACKLOG = os.path.join(POOLDIR, '.backlog')
+
 # Default content ID length
 CIDLEN = 32
 
