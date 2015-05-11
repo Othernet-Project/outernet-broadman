@@ -15,6 +15,9 @@ from . import path
 from . import __version__
 
 
+MSG_MARKER = '[OBM]'
+
+
 class GitError(Exception):
     def __init__(self, stdout):
         self.stdout = stdout
@@ -40,3 +43,16 @@ def init(repo=path.POOLDIR):
     git('add', vfile)
     git('commit', '--author', 'Outernet Broadman <apps@outernet.is>', '-m',
         'Initialized content pool')
+
+
+def commit(p, action, msg=None, repo=path.POOLDIR):
+    git('add', p)
+    cid = path.cid(p)
+    cmsg = '{} {} {}'.format(MSG_MARKER, action, cid)
+    if msg:
+        cmsg += '\n\n' + msg
+    git('commit', '-m', cmsg)
+
+
+def commit_import(p, repo=path.POOLDIR):
+    commit(p, action='IMP', msg='Imported new content')
