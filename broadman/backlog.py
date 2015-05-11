@@ -30,6 +30,18 @@ def format_backlog(action, cid, server):
                      datetime.datetime.now().strftime(TSFMT)])
 
 
+def match_line(cid, server, l):
+    """ Checks a single backlog line if it matches cid-server combination
+
+    Returns the line split into parts.
+    """
+    lsp = l.split(' ')
+    if not lsp:
+        return None
+    if lsp[1] == cid and lsp[2] == server:
+        return lsp
+
+
 def rem_cid(cid, server):
     """ Remove entries that match the given content ID """
     if not os.path.exists(path.BACKLOG):
@@ -37,10 +49,19 @@ def rem_cid(cid, server):
     for l in fileinput.input(path.BACKLOG, inplace=True):
         if l.strip() == '':
             continue
-        lsp = l.split(' ')
-        if lsp[1] == cid and lsp[2] == server:
+        if match_line(cid, server, l):
             continue
         print(l, end='')  # Note that with inplace argument, STDOUT is the file
+
+
+def has_cid(cid, server):
+    """ Checks wether cid-server combination is in backlog """
+    with open(path.BACKLOG) as f:
+        for l in f:
+            ret = match_line(cid, server, l)
+            if not ret:
+                continue
+            return ret
 
 
 def write_backlog(msg):
@@ -57,5 +78,10 @@ def cadd(cid, server):
 
 def cdel(cid, server):
     msg = format_backlog('DEL', cid, server)
-    rem_cid(cid, server)
-    write_backlog(msg)
+    ret = has_cid(cid, server)
+    if not ret:
+        write_backlog(msg)
+    if ret[0] == 'ADD':
+        # Just rever the add
+        rem_cid(cid, server)
+    # Probably already deleted
