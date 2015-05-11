@@ -19,9 +19,10 @@ import conz
 from outernet_metadata import values
 from outernet_metadata import validate
 
-from . import jsonf
+from . import git
 from . import path
 from . import zips
+from . import jsonf
 from . import editor
 
 
@@ -107,6 +108,8 @@ def doimport(p, interactive=False):
             shutil.copytree(os.path.join(tmpdir, hash), target_path)
         with cn.progress('Cleaning up'):
             shutil.rmtree(tmpdir)
+        with cn.progress('Committing changes', excs=(git.GitError,)):
+            git.commit_import(target_path)
         if warnings:
             cn.pstd(cn.color.yellow('{} WARN'.format(p)))
         else:
