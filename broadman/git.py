@@ -46,8 +46,9 @@ def init(repo=path.POOLDIR):
         'Initialized content pool')
 
 
-def commit(p, action, msg=None, extra_data=[], repo=path.POOLDIR):
-    git('add', p)
+def commit(p, action, msg=None, extra_data=[], noadd=False, repo=path.POOLDIR):
+    if not noadd:
+        git('add', p)
     cid = path.cid(p)
     cmsg = [MSG_MARKER, action, cid]
     cmsg.extend(extra_data)
