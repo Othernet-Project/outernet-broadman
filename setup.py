@@ -66,6 +66,7 @@ setup(
             'med = broadman.setmeta:main',
             'mcat = broadman.catmeta:main',
             'pinit = broadman.initrepo:main',
+            'srvadd = broadman.serveradd:main',
         ],
     },
     classifiers=[
