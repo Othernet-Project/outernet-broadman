@@ -205,10 +205,10 @@ def main():
         p = p.strip()
         try:
             set_vals(p, data, removals)
-            cn.pstd(cn.color.green('{} OK'.format(p)))
+            cn.pok(p)
         except jsonf.LoadError:
             err = True
-            cn.pstd(cn.color.red('{} ERR'.format(p)))
             cn.pverr(p, 'Error loading JSON data')
+            cn.png(p)
     if err:
         cn.quit(1)
