@@ -85,7 +85,33 @@ def commit_remove_from_server(p, server):
     commit(p, action='DEL', msg=msg, extra_data=[server], noadd=True)
 
 
-def has_changes(p):
-    """ Check whether some path contains changes """
-    st = git('status', '-s', p)
-    return st != ''
+def commit_update(p):
+    has_history = len(get_history(p)) > 0
+    git('add', p)
+    changes = has_changes(p)
+    if has_history:
+        msg = 'Files changed:\n\n{}'.format(changes)
+        action = 'UPD'
+    else:
+        msg = 'Files added:\n\n{}'.format(changes)
+        action = 'NEW'
+    commit(p, action, msg=msg, noadd=True)
+
+
+def revert(p):
+    """ Revert given path to specified hash """
+    history = get_history(p)
+    if len(history) < 2:
+        raise ValueError('nothing to do')
+    git('checkout', history[1], p)
+    msg = 'Reverted {} to previous state'.format(history[1])
+    commit(p, 'REV', msg=msg)
+
+
+def reset(p):
+    """ Remove any changes on path """
+    history = get_history(p)
+    if len(history) < 1:
+        raise ValueError('nothing to do')
+    git('clean', '-f', p)
+    git('checkout', history[0], p)
