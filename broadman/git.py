@@ -35,6 +35,17 @@ def git(*cmd, **kwargs):
     return p.stdout.read().decode(sys.stdout.encoding)
 
 
+def has_changes(p):
+    """ Check whether some path contains changes """
+    return git('status', '-s', p)
+
+
+def get_history(p):
+    """ Get all commit hashes for a given path as a list """
+    hashes = git('log', '--pretty=format:%H', p)
+    return hashes.split('\n')
+
+
 def init():
     git('init')
     vfile = os.path.join(path.POOLDIR, '.version')
