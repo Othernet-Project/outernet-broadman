@@ -69,6 +69,7 @@ setup(
             'srvadd = broadman.serveradd:main',
             'srvdel = broadman.serverdel:main',
             'update = broadman.update:main',
+            'lschanged = broadman.getchanged:main',
         ],
     },
     classifiers=[
