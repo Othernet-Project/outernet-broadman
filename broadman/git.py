@@ -113,5 +113,5 @@ def reset(p):
     history = get_history(p)
     if len(history) < 1:
         raise ValueError('nothing to do')
-    git('clean', '-f', p)
+    git('clean', '-fd', p)
     git('checkout', history[0], p)
