@@ -45,7 +45,7 @@ def revert(cid):
 
 def add_optional_keys(data):
     for k, v in values.DEFAULTS.items():
-        if k not in data:
+        if k not in data or data[k] is None:
             data[k] = v
     if 'broadcast' not in data:
         data['broadcast'] = '$BROADCAST'
