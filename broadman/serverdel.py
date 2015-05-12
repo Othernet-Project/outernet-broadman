@@ -52,7 +52,9 @@ def main():
     from . import args
 
     parser = args.getparser(
-        'Remove content from servers')
+        'Remove content from servers',
+        usage='%(prog)s [options] CID [CID...]\n       '
+        'CID | %(prog)s [options]')
     required = parser.add_argument_group('required')
     required = required.add_mutually_exclusive_group(required=True)
     parser.add_argument('cids', metavar='CONTENT', nargs='*',

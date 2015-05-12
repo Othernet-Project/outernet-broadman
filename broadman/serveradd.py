@@ -70,7 +70,9 @@ def main():
     from . import args
 
     parser = args.getparser(
-        'Add content to a server')
+        'Add content to a server',
+        usage='%(prog)s [options] CID [CID...]\n       '
+        'CID | %(prog)s [options]')
     parser.add_argument('cids', metavar='CONTENT', nargs='*',
                         help='content ID or path to content directory')
     parser.add_argument('--create', '-c', action='store_true',
