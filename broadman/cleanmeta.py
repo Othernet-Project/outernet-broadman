@@ -71,7 +71,7 @@ def reformat(p):
     jsonf.save(p, data)
 
 
-if __name__ == '__main__':
+def main():
     import os
     from . import path
     from . import args
@@ -96,9 +96,13 @@ if __name__ == '__main__':
         if os.path.basename(cid) == 'info.json':
             p = cid
         else:
-            p = path.infopath(path.contentdirectory(path.cid(cid)))
+            p = path.infopath(path.contentdir(path.cid(cid)))
         try:
             reformat(p)
             cn.pok(cid)
         except jsonf.LoadError:
             cn.png(cid)
+
+
+if __name__ == '__main__':
+    main()
