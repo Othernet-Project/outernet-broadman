@@ -131,14 +131,23 @@ def count_imgs(p):
     return path.countwalk(p, isimg)
 
 
-def set_vals(p, data, removals):
+def setdefault(obj, k, v):
+    if k not in obj or obj[k] in [None, '']:
+        obj[k] = v
+
+
+def set_vals(p, data, removals, only_missing=False):
     if not p.endswith('info.json'):
         p = os.path.join(p, 'info.json')
     meta = jsonf.load(p)
     if 'images' in data and data['images'] < 0:
         data['images'] = count_imgs(p)
         assert data['images'] >= 0, 'Expected positive image count'
-    meta.update(data)
+    if not only_missing:
+        meta.update(data)
+    else:
+        for k, v in data.items():
+            setdefault(meta, k, v)
     for k in removals:
         if k in meta:
             del meta[k]
@@ -150,11 +159,11 @@ def main():
     from . import args
 
     parser = args.getparser('Set metadata keys',
-                            usage='%(prog)s [options] PATH\n       '
-                            'PATH | %(prog)s [options]')
+                            usage='%(prog)s [options] CID\n       '
+                            'CID | %(prog)s [options]')
 
-    parser.add_argument('paths', metavar='PATH', nargs='*',
-                        help='path to metadata file or content directory '
+    parser.add_argument('cids', metavar='CID', nargs='*',
+                        help='content ID or path to content directory'
                         '(ignored when used in a pipe)')
     parser.add_argument('--title', '-t', metavar='TITLE', help='set title')
     parser.add_argument('--url', '-u', metavar='URL', help='set URL')
@@ -187,24 +196,26 @@ def main():
     parser.add_argument('--delete', '-d', metavar='KEY', nargs='+',
                         help='delete one or more keys (required keys cannot '
                         'be removed)')
+    parser.add_argument('--only-missing', '-o', action='store_true',
+                        help='only set value if the key is missing or null')
     args = parser.parse_args()
 
     data = check_args(convert_args(args))
     removals = check_removals(args.delete)
 
     if cn.interm:
-        if not args.paths:
+        if not args.cids:
             parser.print_help()
-            cn.quit()
-        src = args.paths
+            cn.quit(1)
+        src = args.cids
     else:
         src = cn.readpipe()
 
     err = False
-    for p in src:
-        p = p.strip()
+    for cid in src:
+        p = path.infopath(path.contentdir(path.cid(cid.strip())))
         try:
-            set_vals(p, data, removals)
+            set_vals(p, data, removals, only_missing=args.only_missing)
             cn.pok(p)
         except jsonf.LoadError:
             err = True
