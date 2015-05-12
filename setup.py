@@ -65,6 +65,7 @@ setup(
             'zimport = broadman.zimport:main',
             'med = broadman.setmeta:main',
             'mcat = broadman.catmeta:main',
+            'mclean = broadman.cleanmeta:main',
             'pinit = broadman.initrepo:main',
             'srvadd = broadman.serveradd:main',
             'srvdel = broadman.serverdel:main',
