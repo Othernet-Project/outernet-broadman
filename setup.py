@@ -54,7 +54,7 @@ setup(
     long_description=read('README.rst'),
     install_requires=[
         'outernet-metadata==0.4.post4',
-        'conz>=0.4',
+        'conz>=0.5',
         'scandir==0.9',
     ],
     entry_points={
@@ -68,6 +68,7 @@ setup(
             'pinit = broadman.initrepo:main',
             'srvadd = broadman.serveradd:main',
             'srvdel = broadman.serverdel:main',
+            'update = broadman.update:main',
         ],
     },
     classifiers=[
