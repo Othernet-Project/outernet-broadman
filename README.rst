@@ -40,15 +40,19 @@ The following tools are used for working with the content:
 - ``zimport`` - import legacy zipball into master pool
 - ``update`` - for making changes to content permanent, resetting and reverting
   changes
+- ``lschanges`` - listing changed content
+
+Tools for working with metadata metadata:
+
 - ``mcat`` - viewing metadata
 - ``med`` - editing metadata
-- ``lschanges`` - listing changed content
+- ``mclean`` - clean up metadta file
+- ``filter`` - filter paths according to metadata rules
 
 The following tools are used for navigating the content pool:
 
 - ``getpath`` - obtaining a path to content directory or symlink by content ID
 - ``getcid`` - obtaining content ID from content directory path
-- ``filter`` - filter paths according to metadata rules
 
 For managing servers, these tools are available:
 
