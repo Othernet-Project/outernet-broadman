@@ -7,13 +7,13 @@ Collection of scripts for managing Outernet content repository.
 Installing
 ==========
 
-Install the broadman scripts using pip or easy_install::
+Install using pip straight from the repository::
 
-    pip install outernet-broadman
-
-    easy_install outernet-broadman
+    pip install https://github.com/Outernet-Project/outernet-broadman/archive/master.zip
 
 Git also needs to be installed on your system.
+
+Note that only Unix/Linux systems are supported at this moment.
 
 Environment variables
 =====================
