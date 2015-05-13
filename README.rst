@@ -7,13 +7,13 @@ Collection of scripts for managing Outernet content repository.
 Installing
 ==========
 
-Install the broadman scripts using pip or easy_install::
+Install using pip straight from the repository::
 
-    pip install outernet-broadman
-
-    easy_install outernet-broadman
+    pip install https://github.com/Outernet-Project/outernet-broadman/archive/master.zip
 
 Git also needs to be installed on your system.
+
+Note that only Unix/Linux systems are supported at this moment.
 
 Environment variables
 =====================
@@ -41,13 +41,14 @@ The following tools are used for working with the content:
 - ``update`` - for making changes to content permanent, resetting and reverting
   changes
 - ``mcat`` - viewing metadata
-- ``mset`` - editing metadata
+- ``med`` - editing metadata
 - ``lschanges`` - listing changed content
 
 The following tools are used for navigating the content pool:
 
 - ``getpath`` - obtaining a path to content directory or symlink by content ID
 - ``getcid`` - obtaining content ID from content directory path
+- ``filter`` - filter paths according to metadata rules
 
 For managing servers, these tools are available:
 
@@ -96,5 +97,6 @@ the content pool changes to actual servers.
 Reporting bugs
 ==============
 
-Please report bugs to our internal Pivotal Tracker project 'Broadcast
-management'.
+Please report bugs and feature requests to the `issue tracker`_.
+
+.. _issue tracker: https://github.com/Outernet-Project/outernet-broadman/issues
