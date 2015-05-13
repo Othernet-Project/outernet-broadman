@@ -1,4 +1,4 @@
-__version__ = '0.2'
+__version__ = '0.3.dev1'
 __author__ = 'Outernet Inc'
 __license__ = 'GPLv3'
 __copyright__ = """
