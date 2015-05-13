@@ -96,5 +96,6 @@ the content pool changes to actual servers.
 Reporting bugs
 ==============
 
-Please report bugs to our internal Pivotal Tracker project 'Broadcast
-management'.
+Please report bugs and feature requests to the `issue tracker`_.
+
+.. _issue tracker: https://github.com/Outernet-Project/outernet-broadman/issues
