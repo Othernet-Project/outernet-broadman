@@ -41,13 +41,14 @@ The following tools are used for working with the content:
 - ``update`` - for making changes to content permanent, resetting and reverting
   changes
 - ``mcat`` - viewing metadata
-- ``mset`` - editing metadata
+- ``med`` - editing metadata
 - ``lschanges`` - listing changed content
 
 The following tools are used for navigating the content pool:
 
 - ``getpath`` - obtaining a path to content directory or symlink by content ID
 - ``getcid`` - obtaining content ID from content directory path
+- ``filter`` - filter paths according to metadata rules
 
 For managing servers, these tools are available:
 
