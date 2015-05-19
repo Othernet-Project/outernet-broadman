@@ -58,6 +58,7 @@ For managing servers, these tools are available:
 
 - ``srvadd`` - add content to server
 - ``srvdel`` - remove content from server
+- ``srvsync`` - sync backlog with servers
 
 Using the tools
 ===============
