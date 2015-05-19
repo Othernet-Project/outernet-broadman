@@ -14,7 +14,7 @@ import os
 
 import conz
 from validators import make_chain
-from outernet_metadata import validate
+import outernet_metadata.values as values
 
 from . import data
 from . import path
@@ -54,7 +54,7 @@ def clean(key, val):
 
 
 def check(key, val):
-    chain = make_chain(validate.values.SPECS[key])
+    chain = make_chain(values.SPECS[key])
     return chain(val)
 
 
@@ -113,7 +113,7 @@ def check_removals(removals=None):
     if removals is None:
         return ok
     for k in removals:
-        if k in validate.values.REQUIRED:
+        if k in values.REQUIRED:
             # Required keys cannot be removed
             errors.append(k)
         else:
