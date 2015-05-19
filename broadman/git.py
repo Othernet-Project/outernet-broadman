@@ -60,6 +60,8 @@ def commit(p, action, msg=None, extra_data=[], noadd=False):
     if not noadd:
         git('add', p)
     cid = path.cid(p)
+    if not cid:
+        cid = 'BACKLOG'
     cmsg = [MSG_MARKER, action, cid]
     cmsg.extend(extra_data)
     cmsg = ' '.join(cmsg)
@@ -96,6 +98,11 @@ def commit_update(p):
         msg = 'Files added:\n\n{}'.format(changes)
         action = 'NEW'
     commit(p, action, msg=msg, noadd=True)
+
+
+def commit_backlog(processed):
+    msg = 'Backlog processed:\n\n{}'.format('\n'.join(processed))
+    commit(path.BROADCAST, action='BKL', msg=msg)
 
 
 def revert(p):
