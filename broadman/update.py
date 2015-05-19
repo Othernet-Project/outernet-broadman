@@ -13,7 +13,7 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 import os
 
 import conz
-import outernet_metadata.validate as validate
+import outernet_metadata.validator as validator
 
 from . import git
 from . import path
@@ -49,7 +49,7 @@ def update(cid):
     except jsonf.LoadError:
         raise ValueError('invalid metadata file')
     # Validate metadata
-    ret = validate.validate(data)
+    ret = validator.validate(data)
     if ret:
         getter = lambda k, o: (cid, '{} - {}'.format(k, o[k].args[0]))
         cn.poerr(ret, key=getter)
