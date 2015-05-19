@@ -20,9 +20,12 @@ MSG_MARKER = '[OBM]'
 
 
 class GitError(Exception):
-    def __init__(self, stdout):
+    def __init__(self, stdout, cmd):
+        cmd = ' '.join(cmd)
         self.stdout = stdout
-        super(GitError, self).__init__(stdout)
+        self.cmd = cmd
+        msg = "Git error while running '{}': {}".format(cmd, stdout)
+        super(GitError, self).__init__(msg)
 
 
 def git(*cmd, **kwargs):
@@ -31,7 +34,7 @@ def git(*cmd, **kwargs):
                          stderr=subprocess.PIPE)
     p.wait()
     if p.returncode != 0:
-        raise GitError(p.stderr.read().decode(sys.stderr.encoding))
+        raise GitError(p.stderr.read().decode(sys.stderr.encoding), cmd)
     return p.stdout.read().decode(sys.stdout.encoding)
 
 
