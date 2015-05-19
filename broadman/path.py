@@ -20,11 +20,20 @@ try:
 except NameError:
     FILE_ERRORS = (IOError, OSError)
 
+try:
+    DIR_ERRORS = (OSError, NotADirectoryError)
+except NameError:
+    DIR_ERRORS = (OSError,)
+
+
 # Definitive rule for where to get the content pool directory
 POOLDIR = os.environ.get('OUTERNET_CONTENT', '.').rstrip(os.sep)
 
 # Path to backlog file
 BACKLOG = os.path.join(POOLDIR, '.backlog')
+
+# Broad cast log database
+BROADCAST = os.path.join(POOLDIR, 'broadcast.sqlite')
 
 # Default content ID length
 CIDLEN = 32
@@ -65,14 +74,14 @@ def fnwalk(path, fn, shallow=False):
         if shallow:
             return
 
+    entries = scandir.scandir(path)
+
     try:
-        entries = scandir.scandir(path)
+        for entry in entries:
+            for child in fnwalk(entry.path, fn, shallow):
+                yield child
     except OSError:
         return
-
-    for entry in entries:
-        for child in fnwalk(entry.path, fn, shallow):
-            yield child
 
 
 def countwalk(path, fn):
