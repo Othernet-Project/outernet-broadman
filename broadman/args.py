@@ -20,12 +20,15 @@ VERSION = "%(prog)s {} / Python {} {}".format(
     ' '.join(platform.architecture()))
 
 
-def getparser(desc, usage=None, has_debug=False):
+def getparser(desc, usage=None, has_debug=False, has_verbose=False):
     parser = argparse.ArgumentParser(
         description=desc,
         usage=usage,
         epilog=__copyright__)
     parser.add_argument('--version', '-V', action='version', version=VERSION)
+    if has_verbose:
+        parser.add_argument('--verbose', '-v', action='store_true',
+                            help='enable verbose output')
     if has_debug:
         parser.add_argument('--debug', '-D', action='store_true',
                             help='enable debugging')
