@@ -53,9 +53,10 @@ setup(
     packages=find_packages(),
     long_description=read('README.rst'),
     install_requires=[
-        'outernet-metadata==0.4.post4',
+        'outernet-metadata>=0.4.post4',
         'conz>=0.5',
-        'scandir==0.9',
+        'scandir>=0.9',
+        'sqlize>=0.1',
     ],
     entry_points={
         'console_scripts': [
@@ -69,6 +70,7 @@ setup(
             'pinit = broadman.initrepo:main',
             'srvadd = broadman.serveradd:main',
             'srvdel = broadman.serverdel:main',
+            'srvsync = broadman.sync:main',
             'update = broadman.update:main',
             'lschanged = broadman.getchanged:main',
         ],
