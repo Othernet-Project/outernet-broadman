@@ -11,6 +11,8 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 import os
 import zipfile
 
+from . import path
+
 
 def zcid(p):
     """ Extracts the content ID from zip file name """
@@ -31,3 +33,14 @@ def unzip(p, dest):
     z = zipfile.ZipFile(p)
     z.extractall(dest)
     z.close()
+
+
+def pack(zpath, src):
+    """ Create a new zip file from the specified directory """
+    hash = os.path.splitext(os.path.basename(zpath))[0]
+    zfile = zipfile.ZipFile(zpath, mode='w', compression=zipfile.ZIP_DEFLATED)
+    for f in path.fnwalk(src, lambda x: os.path.isfile(x)):
+        zipname = os.path.join(hash, os.path.relpath(f, src))
+        zfile.write(f, arcname=zipname)
+    zfile.close()
+    return zpath
