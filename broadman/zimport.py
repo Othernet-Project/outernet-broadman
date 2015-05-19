@@ -17,7 +17,7 @@ import tempfile
 
 import conz
 from outernet_metadata import values
-from outernet_metadata import validate
+from outernet_metadata import validator
 
 from . import git
 from . import path
@@ -55,7 +55,7 @@ def ask_edit(p, errors):
 
 def check_metadata(p, interactive=False):
     data = jsonf.load(p)
-    errors = validate.validate(data)
+    errors = validator.validate(data)
     if not errors:
         return
     if errors and not interactive:
