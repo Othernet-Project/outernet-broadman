@@ -37,7 +37,7 @@ def domatch(p, args):
         infopath = p
     d = load_file(infopath)
     if data.match(d, args.key, args.keyword, args.t, xmatch=args.x,
-                  icase=args.i, gt=args.gt, lt=args.lt):
+                  icase=args.i, gt=args.gt, lt=args.lt, invert=args.exclude):
         cn.pstd(p)
 
 
@@ -64,6 +64,9 @@ def main():
                         help='do a greater-than KEYWORD match', default=False)
     parser.add_argument('-lt', action='store_true',
                         help='do a less-than KEYWORD match', default=False)
+    parser.add_argument('-e', '--exclude', action='store_true',
+                        help='return everything that does NOT match this query',
+                        default=False)
 
     # Value type
     parser.add_argument('-t', help='treat KEYWORD as type (d for date in '

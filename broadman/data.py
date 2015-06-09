@@ -91,7 +91,7 @@ def bmatch(x, y, **kwargs):
     return x is y
 
 
-def match(data, key, keyword, vtype=None, **kwargs):
+def match(data, key, keyword, vtype=None, invert=False, **kwargs):
     """ Performs various matches of keyword against value of a key in data
 
     ``data`` should be a dict. If there is no key in data, ``None`` is used as
@@ -114,7 +114,9 @@ def match(data, key, keyword, vtype=None, **kwargs):
     x = data.get(key, None)
     y = totype(keyword, vtype)
     if vtype in [DATESTAMP, TIMESTAMP, NUMERIC]:
-        return nmatch(x, y, **kwargs)
+        res =  nmatch(x, y, **kwargs)
     if vtype == BOOLEAN:
-        return bmatch(x, y, **kwargs)
-    return smatch(x, y, **kwargs)
+        res = bmatch(x, y, **kwargs)
+    else:
+        res = smatch(x, y, **kwargs)
+    return invert ^ res
