@@ -60,9 +60,9 @@ def main():
 
     parser = args.getparser(
         'Show metadata from given path',
-        usage='%(prog)s [options] PATH [PATH...]\n       '
-        'PATH | %(prog)s [options]')
-    parser.add_argument('paths', metavar='PATH', nargs='*',
+        usage='%(prog)s [options] CID [CID...]\n       '
+        'CID | %(prog)s [options]')
+    parser.add_argument('cids', metavar='CID', nargs='*',
                         help='path to content directory or metadata file')
     parser.add_argument('--with-id', '-i', action='store_true',
                         help='include content ID as a key')
@@ -75,14 +75,15 @@ def main():
     args = parser.parse_args()
 
     if cn.interm:
-        if not args.paths:
+        if not args.cids:
             parser.print_help()
             cn.quit(1)
-        src = args.paths
+        src = args.cids
     else:
         src = cn.readpipe()
 
     for p in src:
+        p = path.contentdir(path.cid(p.strip()))
         print_meta(p.strip(), args.keys, include_id=args.with_id,
                    include_path=args.with_path)
         if args.separator:
