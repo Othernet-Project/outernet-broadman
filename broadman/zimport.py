@@ -61,7 +61,7 @@ def check_metadata(p, interactive=False):
     if errors and not interactive:
         raise ValueError(errors)
     for k, v in errors.items():
-        cn.pverr(cn.color.red(k), v)
+        cn.pverr(cn.color.red(k), v.args[0])
     ask_edit(p, errors)
     check_metadata(p, interactive)
 
