@@ -40,7 +40,7 @@ The following tools are used for working with the content:
 - ``zimport`` - import legacy zipball into master pool
 - ``update`` - for making changes to content permanent, resetting and reverting
   changes
-- ``lschanges`` - listing changed content
+- ``lschanged`` - listing changed content
 
 Tools for working with metadata metadata:
 
