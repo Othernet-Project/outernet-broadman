@@ -11,6 +11,7 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
 import os
+import re
 
 import conz
 
@@ -20,6 +21,11 @@ from . import jsonf
 
 cn = conz.Console()
 
+SIZES = {
+    'b': 1,
+    'k': 1024,
+    'm': 1024 * 1024,
+}
 
 def load_file(p):
     try:
@@ -29,12 +35,24 @@ def load_file(p):
         cn.quit(1)
 
 
-def domatch(p, args):
-    p = path.infopath(p)
-    if not os.path.basename(p) == 'info.json':
-        infopath = os.path.join(p, 'info.json')
+def size(p, size, invert=False):
+    if os.path.basename(p) == 'info.json':
+        path = p[:-9]
     else:
-        infopath = p
+        p = os.path.join(p, 'info.json')
+    try:
+        # Finds the first non-digit, finds the first character of those, and
+        # slices that first character out of size
+        bytesize = size[re.search('\D', size).span()[0]].lower()
+    except AttributeError:
+        bytesize = 'b'
+    val = int(re.search('\d', size).group(0)) * SIZES[bytesize]
+    if data.sizematch(path, val, invert):
+        cn.pstd(p)
+
+
+def domatch(p, args):
+    infopath = path.infopath(p)
     d = load_file(infopath)
     if data.match(d, args.key, args.keyword, args.t, xmatch=args.x,
                   icase=args.i, gt=args.gt, lt=args.lt, invert=args.exclude):
@@ -48,7 +66,9 @@ def main():
     parser = args.getparser(
         'Match within JSON key values',
         usage='%(prog)s {0} [PATH]\n       PATH | %(prog)s {0}'.format(OPTS))
-    parser.add_argument('key', metavar='KEY', help='key within the JSON data')
+    parser.add_argument('key', metavar='KEY', help='key within the JSON data -'
+                        ' also takes "size" which finds anything larger than '
+                        'the keyword which looks like "10Kb"')
     parser.add_argument('keyword', metavar='KEYWORD', help='search keyword')
     parser.add_argument('paths', metavar='PATH', help='JSON file or content '
                         'directory (dfaults to info.json in current '
@@ -81,7 +101,10 @@ def main():
         src = cn.readpipe()
 
     for p in src:
-        domatch(p.strip(), args)
+        if args.key == 'size':
+            size(p.strip(), args.keyword, args.exclude)
+        else:
+            domatch(p.strip(), args)
 
 
 if __name__ == '__main__':

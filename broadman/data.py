@@ -8,6 +8,7 @@ This software is free software licensed under the terms of GPLv3. See COPYING
 file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
+import subprocess
 from datetime import datetime
 
 DATEFMT = '%Y-%m-%d'
@@ -66,6 +67,15 @@ def totype(s, vtype=None):
     if vtype == BOOLEAN:
         return parse_bool(s)
     raise ValueError('{} is not a supported type'.format(vtype))
+
+
+def getsize(dir):
+    return subprocess.check_output(['du','-s', dir]).split()[0].decode('utf-8')
+
+
+def sizematch(dir, val, invert=False):
+    size = int(getsize(dir))
+    return (size > val) ^ invert
 
 
 def smatch(x, y, xmatch=False, icase=True, **kwargs):
