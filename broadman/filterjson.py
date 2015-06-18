@@ -40,6 +40,7 @@ def size(p, size, invert=False):
         path = p[:-9]
     else:
         p = os.path.join(p, 'info.json')
+        path = p
     try:
         # Finds the first non-digit, finds the first character of those, and
         # slices that first character out of size
