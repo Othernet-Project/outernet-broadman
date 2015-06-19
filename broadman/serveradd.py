@@ -12,7 +12,7 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 
 import os
 
-import outernet_metadata.validate as validate
+import outernet_metadata.validator as validator
 
 import conz
 
@@ -53,7 +53,7 @@ def add_to_servers(cid, servers):
         raise RuntimeError('content has pending changes, please update first')
     # We let the exception from validation propagate up to the caller, and
     # caller is expected to handle this.
-    if validate.validate(jsonf.load(ipath)):
+    if validator.validate(jsonf.load(ipath)):
         raise RuntimeError('content contains invalid metadata')
     for s in servers:
         target = path.contentdir(cid, server=s)
