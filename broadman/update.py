@@ -52,7 +52,7 @@ def update(cid):
     ret = validator.validate(data)
     if ret:
         getter = lambda k, o: (cid, '{} - {}'.format(k, o[k].args[0]))
-        cn.poerr(ret, key=getter)
+        cn.pverr(ret, key=getter)
         raise ValueError('invalid metadata')
     # Validate entry point
     index = data.get('index')
