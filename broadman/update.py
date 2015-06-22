@@ -23,6 +23,11 @@ from . import jsonf
 cn = conz.Console()
 
 
+def remove(cid):
+    cdir = path.contentdir(cid)
+    git.remove(cdir)
+
+
 def reset(cid):
     cdir = path.contentdir(cid)
     try:
@@ -75,10 +80,13 @@ def main():
     revopt = revgrp.add_mutually_exclusive_group()
     revopt.add_argument('--reset', '-r', action='store_true',
                         help='reset all changes instead of updating (cannot '
-                        'be used with --revert)')
+                        'be used with revert or remove)')
     revopt.add_argument('--revert', '-v', action='store_true',
                         help='revert last set of changes (cannot be used with '
-                        'reset)')
+                        'reset or remove)')
+    revopt.add_argument('--remove', '-m', action='store_true',
+                        help='remove content from pool (cannot be used with '
+                        'reset or revert)')
     args = parser.parse_args()
 
     if cn.interm:
@@ -94,6 +102,8 @@ def main():
         fn = reset
     elif args.revert:
         fn = revert
+    elif args.remove:
+        fn = remove
     else:
         fn = update
 

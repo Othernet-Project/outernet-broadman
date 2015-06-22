@@ -125,3 +125,10 @@ def reset(p):
         raise ValueError('nothing to do')
     git('clean', '-fd', p)
     git('checkout', history[0], p)
+
+
+def remove(p):
+    """ Remove directory and all contents """
+    git('rm', '-rf', p)
+    msg = 'Removed {} from pool'.format(p)
+    commit(p, 'REM', msg=msg, noadd=True)
