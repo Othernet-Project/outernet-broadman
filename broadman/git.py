@@ -32,10 +32,10 @@ def git(*cmd, **kwargs):
     cmd = ('git',) + cmd
     p = subprocess.Popen(cmd, cwd=path.POOLDIR, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
-    p.wait()
+    stdout, stderr = p.communicate()
     if p.returncode != 0:
-        raise GitError(p.stderr.read().decode(sys.stderr.encoding), cmd)
-    return p.stdout.read().decode(sys.stdout.encoding)
+        raise GitError(stderr.decode(sys.stderr.encoding), cmd)
+    return stdout.decode(sys.stdout.encoding)
 
 
 def has_changes(p):
