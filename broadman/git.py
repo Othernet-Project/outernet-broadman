@@ -57,7 +57,7 @@ def get_history(p):
 def commit(p, action, msg=None, extra_data=[], noadd=False):
     g = Git()
     if not noadd:
-        g.add(p)
+        g.add([p])
     cid = path.cid(p)
     if not cid:
         cid = 'BACKLOG'
