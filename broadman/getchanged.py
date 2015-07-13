@@ -21,7 +21,7 @@ cn = conz.Console()
 
 def get_changes():
     mdir = path.serverdir()
-    return git.git('status', '-s', mdir).split('\n')
+    return git.Git().git.status(mdir, s=True).split('\n')
 
 
 def list_changes():
