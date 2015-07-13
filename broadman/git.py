@@ -135,13 +135,3 @@ def remove(p):
     g.remove([p])
     msg = 'Removed {} from pool'.format(p)
     commit(p, 'REM', msg)
-
-
-def check_dir(dir):
-    """ GitPython doesn't like absolute paths
-    We check if the root of the provided path is the same as path.POOLDIR. If
-    it is, we remove it. """
-    p = path.POOLDIR
-    if dir[:len(p)] == p:
-        return dir[len(p):]
-
