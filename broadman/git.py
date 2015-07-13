@@ -9,7 +9,7 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
 import os
-from os.path import abspath
+from os.path import abspath, join
 
 from git import Repo, Actor
 
@@ -32,13 +32,28 @@ class Git():
 
 
 def init():
-    p = path.POOLDIR
+    """ Initializes the git repo for the pool """
+    p = abspath(path.POOLDIR)
     git = Repo.init(p)
-    vfile = os.path.join(p, '.version')
+
+    # Initialize repo with .version file
+    vfile = join(p, '.version')
     with open(vfile, 'w') as f:
         f.write(__version__ + '\n')
     git.index.add([vfile])
     git.index.commit('Initialized content pool', author=AUTHOR)
+
+    # Add master dir and remove placeholder file, leave staged to be committed
+    # when first content is imported
+    master = join(p, 'master')
+    os.mkdir(master)
+    holder = join(master, '.dir')
+    with open(holder, 'w') as f:
+        f.write('placeholder for git')
+    git.index.add([master, holder])
+    git.index.commit('Initialized master dir', author=AUTHOR)
+    os.remove(holder)
+    git.index.remove([holder])
 
 
 def has_changes(p):
@@ -56,6 +71,7 @@ def get_history(p):
 
 def commit(p, action, msg=None, extra_data=[], noadd=False):
     g = Git()
+    p = abspath(p)
     if not noadd:
         g.add([p])
     cid = path.cid(p)
