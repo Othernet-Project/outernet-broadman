@@ -9,6 +9,7 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
 import os
+import shutil
 from os.path import abspath, join
 
 from git import Repo, Actor
@@ -136,8 +137,8 @@ def revert(p):
 
 
 def reset(p):
-    g = Git()
     """ Remove any changes on path """
+    g = Git()
     history = get_history(p)
     if len(history) < 1:
         raise ValueError('nothing to do')
@@ -146,8 +147,9 @@ def reset(p):
 
 
 def remove(p):
-    g = Git()
     """ Remove directory and all contents """
-    g.remove([p])
+    g = Git()
+    g.remove([p], r=True)
+    shutil.rmtree(p)
     msg = 'Removed {} from pool'.format(p)
-    commit(p, 'REM', msg)
+    commit(p, 'REM', msg, noadd=True)
