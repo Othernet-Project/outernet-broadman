@@ -15,6 +15,8 @@ import sys
 import shutil
 import tempfile
 
+from git.exc import GitCommandError
+
 import conz
 from outernet_metadata import values
 from outernet_metadata import validator
@@ -108,7 +110,7 @@ def doimport(p, interactive=False):
             shutil.copytree(os.path.join(tmpdir, hash), target_path)
         with cn.progress('Cleaning up'):
             shutil.rmtree(tmpdir)
-        with cn.progress('Committing changes', excs=(git.GitError,)):
+        with cn.progress('Committing changes', excs=(GitCommandError,)):
             git.commit_import(target_path)
         if warnings:
             cn.pstd(cn.color.yellow('{} WARN'.format(p)))
