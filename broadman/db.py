@@ -63,7 +63,11 @@ class DB:
             'aired': aired,
             'expires': expires,
         })
+        self.con.commit()
+        self.con.close()
 
     def remove_content(self, id):
-        q = sql.Update(self.TABLE, 'id=?', removed='?')
-        self.con.execute(str(q), id)
+        q = sql.Update(self.TABLE, 'content_id=:id', removed=':time')
+        self.con.execute(str(q), {'id': id, 'time': datetime.datetime.today()})
+        self.con.commit()
+        self.con.close()

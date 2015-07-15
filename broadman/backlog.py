@@ -23,7 +23,7 @@ TSFMT = '%Y-%m-%dT%H:%M:%S%z'
 
 def format_backlog(action, cid, server):
     """ Format the backlog message for given action and content ID """
-    user = git.git('config', 'user.email').strip()
+    user = git.Git().git.config('user.email').strip()
     if not user:
         raise RuntimeError('Git user has no email, cannot modify backlog')
     return ' '.join([action, cid, server, user,

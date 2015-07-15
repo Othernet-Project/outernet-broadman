@@ -9,59 +9,72 @@ file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
 import os
-import sys
-import subprocess
+import shutil
+from os.path import abspath, join
+
+from git import Repo, Actor
 
 from . import path
 from . import __version__
 
 
 MSG_MARKER = '[OBM]'
+AUTHOR = Actor("Outernet Broadman", "apps@outernet.is")
 
 
-class GitError(Exception):
-    def __init__(self, stdout, cmd):
-        cmd = ' '.join(cmd)
-        self.stdout = stdout
-        self.cmd = cmd
-        msg = "Git error while running '{}': {}".format(cmd, stdout)
-        super(GitError, self).__init__(msg)
-
-
-def git(*cmd, **kwargs):
-    cmd = ('git',) + cmd
-    p = subprocess.Popen(cmd, cwd=path.POOLDIR, stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE)
-    stdout, stderr = p.communicate()
-    if p.returncode != 0:
-        raise GitError(stderr.decode(sys.stderr.encoding), cmd)
-    return stdout.decode(sys.stdout.encoding)
-
-
-def has_changes(p):
-    """ Check whether some path contains changes """
-    return git('status', '-s', p)
-
-
-def get_history(p):
-    """ Get all commit hashes for a given path as a list """
-    hashes = git('log', '--pretty=format:%H', p)
-    return hashes.split('\n')
+class Git():
+    def __init__(self):
+        repo = Repo(abspath(path.POOLDIR))
+        index = repo.index
+        self.add = index.add
+        self.git = repo.git
+        self.commit = index.commit
+        self.remove = index.remove
 
 
 def init():
-    git('init')
-    vfile = os.path.join(path.POOLDIR, '.version')
+    """ Initializes the git repo for the pool """
+    p = abspath(path.POOLDIR)
+    git = Repo.init(p)
+
+    # Initialize repo with .version file
+    vfile = join(p, '.version')
     with open(vfile, 'w') as f:
         f.write(__version__ + '\n')
-    git('add', vfile)
-    git('commit', '--author', 'Outernet Broadman <apps@outernet.is>', '-m',
-        'Initialized content pool')
+    git.index.add([vfile])
+    git.index.commit('Initialized content pool', author=AUTHOR)
+
+    # Add master dir and remove placeholder file, leave staged to be committed
+    # when first content is imported
+    master = join(p, 'master')
+    os.mkdir(master)
+    holder = join(master, '.dir')
+    with open(holder, 'w') as f:
+        f.write('placeholder for git')
+    git.index.add([master, holder])
+    git.index.commit('Initialized master dir', author=AUTHOR)
+    os.remove(holder)
+    git.index.remove([holder])
+
+
+def has_changes(p):
+    g = Git()
+    """ Check whether some path contains changes """
+    return g.git.status(p, s=True)
+
+
+def get_history(p):
+    g = Git()
+    """ Get all commit hashes for a given path as a list """
+    hashes = g.git.log(pretty='format:%H')
+    return hashes.split('\n')
 
 
 def commit(p, action, msg=None, extra_data=[], noadd=False):
+    g = Git()
+    p = abspath(p)
     if not noadd:
-        git('add', p)
+        g.add([p])
     cid = path.cid(p)
     if not cid:
         cid = 'BACKLOG'
@@ -70,7 +83,7 @@ def commit(p, action, msg=None, extra_data=[], noadd=False):
     cmsg = ' '.join(cmsg)
     if msg:
         cmsg += '\n\n' + msg
-    git('commit', '-m', cmsg)
+    g.commit(cmsg)
 
 
 def commit_import(p):
@@ -84,15 +97,17 @@ def commit_add_to_server(p, server):
 
 
 def commit_remove_from_server(p, server):
-    git('rm', '--cached', p)
+    g = Git()
+    g.remove([p], cached=True)
     cid = path.cid(p)
     msg = 'Removed {} <- {}'.format(cid, server)
     commit(p, action='DEL', msg=msg, extra_data=[server], noadd=True)
 
 
 def commit_update(p):
+    g = Git()
     has_history = len(get_history(p)) > 0
-    git('add', p)
+    g.add(p)
     changes = has_changes(p)
     if has_history:
         msg = 'Files changed:\n\n{}'.format(changes)
@@ -110,25 +125,31 @@ def commit_backlog(processed):
 
 def revert(p):
     """ Revert given path to specified hash """
+    g = Git()
     history = get_history(p)
+    print(history)
+    print(history[1])
     if len(history) < 2:
         raise ValueError('nothing to do')
-    git('checkout', history[1], p)
+    g.git.checkout(history[1], p=True)
     msg = 'Reverted {} to previous state'.format(history[1])
     commit(p, 'REV', msg=msg)
 
 
 def reset(p):
     """ Remove any changes on path """
+    g = Git()
     history = get_history(p)
     if len(history) < 1:
         raise ValueError('nothing to do')
-    git('clean', '-fd', p)
-    git('checkout', history[0], p)
+    g.git.clean(f=True, d=True, p=True)
+    g.git.checkout(history[0], p=True)
 
 
 def remove(p):
     """ Remove directory and all contents """
-    git('rm', '-rf', p)
+    g = Git()
+    g.remove([p], r=True)
+    shutil.rmtree(p)
     msg = 'Removed {} from pool'.format(p)
-    commit(p, 'REM', msg=msg, noadd=True)
+    commit(p, 'REM', msg, noadd=True)

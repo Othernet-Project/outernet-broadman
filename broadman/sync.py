@@ -78,7 +78,7 @@ def read_syncdef(srv):
     defs = {}
     with open(sdpath, 'r') as f:
         defs['add'] = f.readline().strip()
-        defs['delete'] = f.readline().strip()
+        defs['del'] = f.readline().strip()
     return defs
 
 
