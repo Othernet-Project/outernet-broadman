@@ -74,10 +74,9 @@ def fnwalk(path, fn, shallow=False):
         if shallow:
             return
 
-    entries = scandir.scandir(path)
 
     try:
-        for entry in entries:
+        for entry in scandir.scandir(path):
             for child in fnwalk(entry.path, fn, shallow):
                 yield child
     except OSError:
