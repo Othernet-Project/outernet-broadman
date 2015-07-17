@@ -90,7 +90,7 @@ def main():
             cn.quit(1)
         src = args.cids
     else:
-        src = args.readpipe()
+        src = cn.readpipe()
 
     for cid in src:
         cid = path.cid(cid)
