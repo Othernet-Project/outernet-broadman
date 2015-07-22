@@ -57,6 +57,7 @@ setup(
         'conz>=0.5',
         'scandir>=0.9',
         'sqlize>=0.1',
+        'GitPython>=1.0.1',
     ],
     entry_points={
         'console_scripts': [
