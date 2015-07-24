@@ -107,7 +107,7 @@ def commit_remove_from_server(p, server):
 def commit_update(p):
     g = Git()
     has_history = len(get_history(p)) > 0
-    g.add(p)
+    g.add([p])
     changes = has_changes(p)
     if has_history:
         msg = 'Files changed:\n\n{}'.format(changes)
