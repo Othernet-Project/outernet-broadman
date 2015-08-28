@@ -68,17 +68,22 @@ def build_zbs(srv_dir, cn):
     return finished, tdir
 
 
-def write_guide(guide):
-    print(guide)
-    with open('guide.json', 'w') as file:
+def write_guide(guide, out):
+    with open(out, 'w') as file:
         json.dump(guide, file)
 
 
 def find_servers():
-    dirs = next(os.walk(path.POOLDIR))[1]
+    out_dir = path.POOLDIR
+    dirs = next(os.walk(out_dir))[1]
+    dirs = [x for x in dirs if os.path.isdir(os.path.join(out_dir, x))]
     dirs.remove('.git')
     dirs.remove('master')
     return [os.path.join(path.POOLDIR, x) for x in dirs]
+
+
+def sync_guide(syncdef):
+    return os.system(syncdef)
 
 
 def main():
@@ -90,27 +95,33 @@ def main():
                             has_verbose=True)
     parser.add_argument('--dir', help='use this to set dir to something other '
                         'than automatically finding all', dest='srv_dir')
+    parser.add_argument('--syncdef', help='a single line shell command for '
+                        'syncing guide.json, where {} is the path to the guide'
+                        '.json file. default: echo {}', dest='syncdef')
+
     args = parser.parse_args()
 
     cn.verbose = args.verbose
     cn.debug = args.debug
 
-    def fail(msg):
-        cn.perr(msg)
-        cn.png('built guide')
-        cn.quit(1)
-
     try:
         srv_dir = args.srv_dir or find_servers()
+        syncdef = args.syncdef or 'echo {}'
         zb_list, tdir = build_zbs(srv_dir, cn)
+        print(len(zb_list))
         guide = build_guide(zb_list)
         shutil.rmtree(tdir)
-        write_guide(guide)
+        out_file = os.path.join(path.POOLDIR, 'guide.json')
+        write_guide(guide, out_file)
         cn.pok('built guide')
+        syncdef = syncdef.format(out_file)
+        resp = sync_guide(syncdef)
+        if not resp:
+            cn.pok('synced guide')
+        else:
+            cn.png('syncdef failed')
     except cn.ProgressAbrt:
         cn.png('built guide')
-    except RuntimeError:
-        cn.pok('no backlog', ok='OK')
 
 
 if __name__ == '__main__':
