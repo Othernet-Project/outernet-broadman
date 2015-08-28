@@ -48,6 +48,7 @@ from . import git
 from . import path
 from . import zips
 from . import jsonf
+from . import guide
 
 
 try:
@@ -218,6 +219,8 @@ def main():
     try:
         syncall(args.nosync)
         cn.pok('backlog sync')
+        guide.main()
+        cn.pok('guide creation')
     except cn.ProgressAbrt:
         cn.png('backlog sync')
     except RuntimeError:

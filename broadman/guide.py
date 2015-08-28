@@ -50,8 +50,9 @@ def build_guide(zb_list):
 
 def build_zbs(srv_dir, cn):
     zb_list = []
-    for dirpath, dirnames, filenames in os.walk(srv_dir):
-        zb_list.extend(dirnames)
+    for srv in srv_dir:
+        for dirpath, dirnames, filenames in os.walk(srv):
+            zb_list.extend(dirnames)
 
     tdir = tempfile.mkdtemp()
     finished = []
@@ -73,6 +74,13 @@ def write_guide(guide):
         json.dump(guide, file)
 
 
+def find_servers():
+    dirs = next(os.walk(path.POOLDIR))[1]
+    dirs.remove('.git')
+    dirs.remove('master')
+    return [os.path.join(path.POOLDIR, x) for x in dirs]
+
+
 def main():
     from . import args
     import conz
@@ -81,7 +89,7 @@ def main():
     parser = args.getparser('Sync backlog to servers', has_debug=True,
                             has_verbose=True)
     parser.add_argument('--dir', help='use this to set dir to something other '
-                        'than odc1', dest='srv_dir')
+                        'than automatically finding all', dest='srv_dir')
     args = parser.parse_args()
 
     cn.verbose = args.verbose
@@ -92,12 +100,9 @@ def main():
         cn.png('built guide')
         cn.quit(1)
 
-
     try:
-        import pdb; pdb.set_trace()
-        zb_list, tdir = build_zbs(
-            args.srv_dir or os.path.join(path.POOLDIR, 'odc1'),
-            cn)
+        srv_dir = args.srv_dir or find_servers()
+        zb_list, tdir = build_zbs(srv_dir, cn)
         guide = build_guide(zb_list)
         shutil.rmtree(tdir)
         write_guide(guide)
