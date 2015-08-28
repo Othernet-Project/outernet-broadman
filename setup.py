@@ -73,6 +73,7 @@ setup(
             'srvsync = broadman.sync:main',
             'update = broadman.update:main',
             'lschanged = broadman.getchanged:main',
+            'buildguide = broadman.guide:main',
         ],
     },
     classifiers=[
