@@ -11,69 +11,49 @@ except NameError:
     FILE_ERRORS = (IOError, OSError)
 
 
-def load_meta(cid_path):
-    meta_path = path.infopath(cid_path)
+def load_meta(cdir):
+    """ Takes a CID path; returns metadata as a dict """
+    meta_path = path.infopath(cdir)
     meta = open(meta_path, 'r').read()
     return json.loads(meta)
 
 
-def get_title(cid_path):
-    meta = load_meta(cid_path)
-    return meta['title']
-
-
-def get_size(cid_path):
+def get_size(cdir):
+    """ Takes a cid; returns uncompressed total size """
     total_size = 0
-    for dirpath, dirnames, filenames in os.walk(cid_path):
+    for dirpath, dirnames, filenames in os.walk(cdir):
         for f in filenames:
             fp = os.path.join(dirpath, f)
             total_size += os.path.getsize(fp)
     return total_size
 
 
-def process_zipball(zb):
-    compressed = os.path.getsize(zb)
-    cid_path = next(path.find_contentdirs(zb)) # find_contentdirs returns a generator
-    title = get_title(cid_path)
-    size = get_size(cid_path)
-    return {'compressed': compressed, 'title': title, 'size': size}
+def get_compressed_size(cid, tdir, cdir):
+    """ Takes a cid, temporary dir, and cdir; returns compressed total size """
+    zname = cid + '.zip'
+    zpath = os.path.join(tdir, zname)
+    zips.pack(zpath, cdir)
+    return os.path.getsize(zpath)
 
 
-def build_guide(zb_list):
-    compiled = {}
-    for zb in zb_list:
-        md5, ext = os.path.basename(zb).split('.')
-        info = process_zipball(zb)
-        compiled[md5] = info
-    return(compiled)
-
-
-def build_zbs(srv_dir, cn):
-    zb_list = []
-    for srv in srv_dir:
-        for dirpath, dirnames, filenames in os.walk(srv):
-            zb_list.extend(dirnames)
-
-    tdir = tempfile.mkdtemp()
-    finished = []
-
-    for zb in zb_list:
-        cid = path.cid(zb)
-        cdir = path.contentdir(cid)
-        with cn.progress('Packing zip file', excs=FILE_ERRORS + (RuntimeError,)):
-            zname = cid + '.zip'
-            zpath = os.path.join(tdir, zname)
-            zips.pack(zpath, cdir)
-        finished.append(zpath)
-    return finished, tdir
+def get_info(cid, tdir):
+    """ Takes a cid; returns compressed/uncompressed size and title """
+    cdir = next(path.find_contentdirs(cid)) # find_contentdirs returns a generator
+    meta = load_meta(cdir)
+    title = meta['title']
+    size = get_size(cdir)
+    compressed = get_compressed_size(cid, tdir, cdir)
+    return {'title': title, 'compressed_size': compressed, 'uncompressed_size': size}
 
 
 def write_guide(guide, out):
+    """ Takes a dict and a filepath; writes the dict to the file """
     with open(out, 'w') as file:
         json.dump(guide, file)
 
 
 def find_servers():
+    """ Finds all servers in the pooldir; returns a list of directories, except .git and master """
     out_dir = path.POOLDIR
     dirs = next(os.walk(out_dir))[1]
     dirs = [x for x in dirs if os.path.isdir(os.path.join(out_dir, x))]
@@ -82,8 +62,24 @@ def find_servers():
     return [os.path.join(path.POOLDIR, x) for x in dirs]
 
 
-def sync_guide(syncdef):
-    return os.system(syncdef)
+def build_list(servers):
+    """ Takes a list of servers; returns a list of cids """
+    if type(servers) == str:
+        return os.listdir(servers)
+    zipball_list = []
+    for server in servers:
+        zipball_list.extend(os.listdir(server))
+    return zipball_list
+
+
+def build_guide(cid_list):
+    """ Builds a guide dict from a list of cids """
+    compiled = {}
+    tdir = tempfile.mkdtemp()
+    for cid in cid_list:
+        compiled[cid] = get_info(cid, tdir)
+    shutil.rmtree(tdir)
+    return(compiled)
 
 
 def main():
@@ -93,35 +89,29 @@ def main():
 
     parser = args.getparser('Sync backlog to servers', has_debug=True,
                             has_verbose=True)
-    parser.add_argument('--dir', help='use this to set dir to something other '
-                        'than automatically finding all', dest='srv_dir')
-    parser.add_argument('--syncdef', help='a single line shell command for '
-                        'syncing guide.json, where {} is the path to the guide'
-                        '.json file. default: echo {}', dest='syncdef')
+    parser.add_argument('--server', '-s', help='use this to set the server to '
+                        'something other than automatically finding all',
+                        dest='servers')
+    parser.add_argument('--print', '-p', help='print to stdout instead of '
+                        'writing to a file', action='store_true', dest='print')
 
     args = parser.parse_args()
 
     cn.verbose = args.verbose
     cn.debug = args.debug
 
-    try:
-        srv_dir = args.srv_dir or find_servers()
-        syncdef = args.syncdef or 'echo {}'
-        zb_list, tdir = build_zbs(srv_dir, cn)
-        print(len(zb_list))
-        guide = build_guide(zb_list)
-        shutil.rmtree(tdir)
-        out_file = os.path.join(path.POOLDIR, 'guide.json')
+    servers = args.servers or find_servers()
+    cid_list = build_list(servers)
+    cn.pok('zipballs found: {}'.format(len(cid_list)))
+    guide = build_guide(cid_list)
+    cn.pok('built guide')
+    p = args.print or False
+    if not p:
+        out_file = 'guide.json'
         write_guide(guide, out_file)
-        cn.pok('built guide')
-        syncdef = syncdef.format(out_file)
-        resp = sync_guide(syncdef)
-        if not resp:
-            cn.pok('synced guide')
-        else:
-            cn.png('syncdef failed')
-    except cn.ProgressAbrt:
-        cn.png('built guide')
+        cn.pok('wrote guide')
+    else:
+        print(guide)
 
 
 if __name__ == '__main__':
